@@ -12,8 +12,8 @@ use WeakMap;
  */
 final class ComputedCache
 {
-    /** @var WeakMap<object, array<string, mixed>> */
-    private static WeakMap $cache;
+    /** @var WeakMap<object, array<string, mixed>>|null */
+    private static ?WeakMap $cache = null;
 
     public static function get(object $dto, string $propertyName): mixed
     {
@@ -65,9 +65,7 @@ final class ComputedCache
      */
     public static function clearAll(): void
     {
-        /** @var WeakMap<object, array<string, mixed>> $weakMap */
-        $weakMap = new WeakMap;
-        self::$cache = $weakMap;
+        self::$cache = null;
     }
 
     private static function ensureInitialized(): void

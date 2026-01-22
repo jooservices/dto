@@ -35,8 +35,18 @@ final class ComputedCacheTest extends TestCase
     public function test_get_returns_null_for_non_existent_property(): void
     {
         $dto = new stdClass;
+        ComputedCache::set($dto, 'other_property', 'value');
 
+        // DTO exists in cache but property doesn't - should return null from line 26
         $this->assertNull(ComputedCache::get($dto, 'nonexistent'));
+    }
+
+    public function test_get_returns_null_when_dto_not_in_cache(): void
+    {
+        $dto = new stdClass;
+
+        // DTO doesn't exist in cache at all - should return null from line 23
+        $this->assertNull(ComputedCache::get($dto, 'any_property'));
     }
 
     public function test_get_returns_null_for_non_existent_object(): void
@@ -71,6 +81,16 @@ final class ComputedCacheTest extends TestCase
 
         $this->assertFalse(ComputedCache::has($dto, 'property1'));
         $this->assertFalse(ComputedCache::has($dto, 'property2'));
+    }
+
+    public function test_clear_non_existent_dto(): void
+    {
+        $dto = new stdClass;
+
+        // Clear a DTO that doesn't exist in cache - should not error
+        ComputedCache::clear($dto);
+
+        $this->assertFalse(ComputedCache::has($dto, 'any_property'));
     }
 
     public function test_clear_all(): void
@@ -143,5 +163,20 @@ final class ComputedCacheTest extends TestCase
         $this->assertSame(['a', 'b'], ComputedCache::get($dto, 'array'));
         $this->assertNull(ComputedCache::get($dto, 'null'));
         $this->assertTrue(ComputedCache::has($dto, 'null')); // Null value is stored
+    }
+
+    public function test_ensure_initialized_lazy_initialization(): void
+    {
+        // Clear all to set cache to null, then call a method to trigger initialization (lines 77-78)
+        ComputedCache::clearAll();
+
+        $dto = new stdClass;
+
+        // This should trigger ensureInitialized() and execute lines 77-78
+        ComputedCache::set($dto, 'test', 'value');
+
+        // Verify it works after lazy initialization
+        $this->assertSame('value', ComputedCache::get($dto, 'test'));
+        $this->assertTrue(ComputedCache::has($dto, 'test'));
     }
 }
