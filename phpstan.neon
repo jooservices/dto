@@ -1,0 +1,111 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    checkMissingCallableSignature: true
+    checkUninitializedProperties: true
+    checkDynamicProperties: true
+    polluteScopeWithLoopInitialAssignments: false
+    polluteScopeWithAlwaysIterableForeach: false
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    reportMaybesInMethodSignatures: true
+    reportStaticMethodSignatures: true
+    reportMaybesInPropertyPhpDocTypes: true
+    reportWrongPhpDocTypeInVarTag: true
+    exceptions:
+        implicitThrows: false
+        check:
+            missingCheckedExceptionInThrows: false
+            tooWideThrowType: false
+    ignoreErrors:
+        - '#Dynamic call to static method PHPUnit\\Framework\\Assert::#'
+        -
+            message: '#expects class-string, string given#'
+            paths:
+                - tests/*
+        -
+            message: '#will always evaluate to true#'
+            paths:
+                - tests/*
+        -
+            message: '#Cannot access offset .* on mixed#'
+            paths:
+                - tests/*
+        -
+            message: '#Access to an undefined property object::#'
+            paths:
+                - tests/*
+        -
+            message: '#Property .* is never read, only written#'
+            paths:
+                - tests/*
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            paths:
+                - tests/*
+        -
+            message: '#Class .* has an uninitialized property#'
+            paths:
+                - tests/*
+        -
+            message: '#Dead catch#'
+            paths:
+                - tests/*
+        -
+            message: '#never returns .* so it can be removed from the return type#'
+            paths:
+                - tests/*
+        -
+            message: '#expects array<mixed>|ArrayAccess#'
+            paths:
+                - tests/*
+        -
+            message: '#Method .* should return array<string, mixed> but returns array#'
+            paths:
+                - tests/*
+        -
+            message: '#does not call parent constructor#'
+            paths:
+                - tests/*
+        -
+            message: '#Comparison operation .* is always false#'
+            paths:
+                - tests/*
+        -
+            message: '#Parameter .* of method PHPUnit\\Framework\\Assert::assertCount\(\) expects Countable\|iterable#'
+            paths:
+                - tests/*
+        -
+            message: '#has parameter .* with no value type specified in iterable type array#'
+            paths:
+                - tests/*
+        -
+            message: '#return type has no value type specified in iterable type array#'
+            paths:
+                - tests/*
+        -
+            message: '#Cannot access property .* on .+\|null#'
+            paths:
+                - tests/*
+        -
+            message: '#Method .* should return T of object but returns object#'
+            paths:
+                - tests/*
+        -
+            message: '#Parameter .* of (method|function) .* expects string, string\|false given#'
+            paths:
+                - tests/*
+        -
+            message: '#Method .* is unused#'
+            paths:
+                - tests/*

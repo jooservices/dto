@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<ruleset name="DTO Coding Standard">
+    <description>Coding standard for JOOservices DTO package - Aligned with Laravel/Pint standards</description>
+
+    <!-- Target PHP version -->
+    <config name="testVersion" value="8.5"/>
+
+    <!-- Show progress -->
+    <arg value="p"/>
+
+    <!-- Show colors in output -->
+    <arg name="colors"/>
+
+    <!-- Include PSR-12 standard (Laravel base) -->
+    <rule ref="PSR12">
+        <!-- Exclude rules that conflict with Laravel/Pint standards -->
+        <!-- Laravel doesn't require spaces around concatenation operator -->
+        <exclude name="Squiz.Strings.ConcatenationSpacing"/>
+        <exclude name="PSR12.Operators.OperatorSpacing"/>
+        <!-- PHP 8.0+ constructor property promotion has different brace rules -->
+        <exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody"/>
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+        <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore"/>
+        <!-- Laravel allows instantiation without parentheses for simple cases -->
+        <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses"/>
+        <!-- PHPUnit tests use snake_case method names -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
+        <!-- Laravel has specific formatting for anonymous classes -->
+        <exclude name="PSR12.Classes.AnonClassDeclaration"/>
+        <exclude name="PSR12.Classes.ClassInstantiation"/>
+    </rule>
+
+    <!-- Paths to check -->
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Exclude vendor directory -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/coverage/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    
+    <!-- Allow multiple classes in test files (for helper/mock classes) -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Laravel/Pint compatible rules -->
+    
+    <!-- Arrays -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    
+    <!-- Line length - Laravel uses 120 chars (soft limit, can be exceeded for readability) -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="150"/>
+        </properties>
+        <!-- Don't fail on line length, just warn -->
+        <severity>4</severity>
+    </rule>
+    
+    <!-- Code analysis - only warn about unused parameters, don't fail -->
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+        <severity>4</severity>
+    </rule>
+    
+    <!-- Comments -->
+    <rule ref="Generic.Commenting.Todo">
+        <severity>4</severity>
+    </rule>
+    <rule ref="Generic.Commenting.Fixme">
+        <severity>4</severity>
+    </rule>
+    
+    <!-- PHP -->
+    <rule ref="Generic.PHP.DeprecatedFunctions"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions"/>
+    
+    <!-- Whitespace -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false"/>
+        </properties>
+    </rule>
+    
+    <!-- Classes -->
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+    <rule ref="PSR1.Classes.ClassDeclaration"/>
+    
+    <!-- Strings - Allow single and double quotes (Laravel flexible) -->
+    <rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired">
+        <severity>0</severity>
+    </rule>
+</ruleset>

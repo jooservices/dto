@@ -1,0 +1,127 @@
+# ============================================
+# Cursor AI Ignore File
+# Files and directories that Cursor AI should ignore
+# ============================================
+
+# ============================================
+# Dependencies
+# ============================================
+/vendor/
+node_modules/
+composer.lock
+
+# ============================================
+# Build & Cache
+# ============================================
+/build/
+/dist/
+.phpunit.cache/
+.phpunit.result.cache
+.php-cs-fixer.cache
+.phpstan/
+.phpstan.cache
+coverage/
+*.cache
+
+# ============================================
+# Generated Files
+# ============================================
+*.d.ts
+types/
+*.generated.php
+*.stub.php
+
+# ============================================
+# Documentation Build
+# ============================================
+docs/_build/
+docs/.doctrees/
+site/
+
+# ============================================
+# Test Output
+# ============================================
+tests/_output/
+tests/_support/.phpunit.result.cache
+coverage.xml
+coverage/
+
+# ============================================
+# IDE & Editor Files
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.buildpath
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.fleet/
+*.iml
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+*.pid
+
+# ============================================
+# Environment Files
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.backup
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.bak
+tmp/
+temp/
+
+# ============================================
+# Large Binary Files (if any)
+# ============================================
+*.pdf
+*.zip
+*.tar.gz
+*.rar
+*.exe
+*.dmg
+*.iso
+
+# ============================================
+# Git Files (usually not needed in AI context)
+# ============================================
+.git/
+.gitmodules
+# Note: .gitignore and .gitattributes should be readable for configuration
+
+# ============================================
+# CI/CD Files (usually not needed)
+# ============================================
+
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Jenkinsfile
+
+# ============================================
+# Package Manager Lock Files
+# ============================================
+

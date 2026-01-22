@@ -1,0 +1,164 @@
+# ============================================
+# Composer
+# ============================================
+/vendor/
+composer.lock
+
+# ============================================
+# IDE & Editors
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.buildpath
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.fleet/
+*.iml
+
+# ============================================
+# PHPUnit & Testing
+# ============================================
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+coverage.xml
+.phpunit.cache
+.phpunit.result.cache
+tests/_output/
+tests/_support/.phpunit.result.cache
+
+# ============================================
+# Code Quality Tools
+# ============================================
+# Pint (Laravel)
+.pint.cache
+pint.cache
+
+# PHP-CS-Fixer
+.php-cs-fixer.cache
+.php-cs-fixer.php
+
+# PHPCS
+.phpcs-cache
+phpcs.xml.cache
+
+# PHPStan
+.phpstan/
+.phpstan.cache
+phpstan-baseline.neon
+phpstan-baseline.php
+
+# PHPMD
+phpmd.log
+
+# Psalm
+.psalm/
+psalm.xml
+psalm-baseline.xml
+
+# SonarCloud
+.sonar/
+.scannerwork/
+
+# Gitleaks
+gitleaks-report.json
+gitleaks-report.sarif
+.gitleaks/
+
+# ============================================
+# Build & Distribution
+# ============================================
+/build/
+/dist/
+*.phar
+*.phar.gz
+
+# ============================================
+# Logs & Debug
+# ============================================
+*.log
+*.log.*
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================
+# Environment & Config
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.backup
+.env.production
+.env.testing
+.env.development
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+.AppleDouble
+.LSOverride
+Icon
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+*.cache
+.cache/
+tmp/
+temp/
+*.orig
+
+# ============================================
+# Documentation Build
+# ============================================
+docs/_build/
+docs/.doctrees/
+site/
+
+# ============================================
+# TypeScript Generation (if implemented)
+# ============================================
+*.d.ts
+types/
+tsconfig.json
+
+# ============================================
+# CaptainHook
+# ============================================
+.captainhook/
+
+# ============================================
+# Miscellaneous
+# ============================================
+*.zip
+*.tar
+*.tar.gz
+*.rar
+node_modules/
+.npm
+.yarn/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

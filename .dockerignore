@@ -1,0 +1,153 @@
+# ============================================
+# Docker Ignore File
+# Files and directories to exclude from Docker builds
+# ============================================
+
+# ============================================
+# Git
+# ============================================
+.git/
+.gitignore
+.gitattributes
+.gitmodules
+.git/
+
+# ============================================
+# Dependencies (will be installed in container)
+# ============================================
+/vendor/
+node_modules/
+composer.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# IDE & Editor Files
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.buildpath
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.fleet/
+*.iml
+
+# ============================================
+# Build & Cache
+# ============================================
+/build/
+/dist/
+.phpunit.cache/
+.phpunit.result.cache
+.php-cs-fixer.cache
+.phpstan/
+.phpstan.cache
+coverage/
+*.cache
+*.phar
+*.phar.gz
+
+# ============================================
+# Test Output
+# ============================================
+tests/_output/
+coverage.xml
+coverage/
+.phpunit.cache
+
+# ============================================
+# Documentation
+# ============================================
+docs/_build/
+docs/.doctrees/
+site/
+*.md
+!README.md
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+.AppleDouble
+.LSOverride
+Icon
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================
+# Environment Files (use Docker secrets instead)
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.backup
+.env.production
+.env.testing
+.env.development
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.bak
+tmp/
+temp/
+*.orig
+
+# ============================================
+# CI/CD Files
+# ============================================
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Jenkinsfile
+.captainhook/
+
+# ============================================
+# Docker Files (don't copy into itself)
+# ============================================
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# ============================================
+# Large Binary Files
+# ============================================
+*.pdf
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.exe
+*.dmg
+*.iso
+
+# ============================================
+# Generated Files
+# ============================================
+*.d.ts
+types/
+*.generated.php

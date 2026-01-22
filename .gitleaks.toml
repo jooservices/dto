@@ -1,0 +1,53 @@
+# Gitleaks Configuration for JOOservices DTO
+# Documentation: https://github.com/gitleaks/gitleaks
+
+title = "JOOservices DTO Gitleaks Configuration"
+
+[extend]
+# Use default Gitleaks rules as base
+useDefault = true
+
+[allowlist]
+description = "Allowlisted files and patterns"
+
+# Files to ignore
+paths = [
+  '''\.md$''',                    # Markdown files (may contain example keys)
+  '''\.txt$''',                   # Text files in tests
+  '''^tests/fixtures/''',         # Test fixtures
+  '''^\.gitleaks\.toml$''',       # This config file
+  '''composer\.lock$''',          # Composer lock file
+  '''package-lock\.json$''',      # NPM lock file
+  '''^vendor/''',                 # Vendor directory (dependencies)
+]
+
+# Regex patterns to ignore (example keys, etc.)
+regexes = [
+  '''example[_-]?key''',          # Example keys in docs
+  '''fake[_-]?secret''',          # Fake secrets in tests
+  '''dummy[_-]?token''',          # Dummy tokens
+  '''test[_-]?password''',        # Test passwords
+  '''YOUR[_-]?API[_-]?KEY''',     # Placeholder text
+  '''REPLACE[_-]?ME''',           # Placeholder text
+  '''CHANGEME''',                 # Placeholder text
+  '''xxxxxxxx''',                 # Placeholder x's
+]
+
+# Stop words - ignore commits with these
+stopwords = [
+  '''example''',
+  '''sample''',
+  '''placeholder''',
+]
+
+# Allow specific commits (use commit SHA)
+# commits = [
+#   "abc123...",
+# ]
+
+# Custom rules can be added here
+# [[rules]]
+# id = "custom-rule-1"
+# description = "Custom API Key Pattern"
+# regex = '''custom_pattern_here'''
+# tags = ["key", "API"]
