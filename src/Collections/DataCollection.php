@@ -96,14 +96,6 @@ readonly class DataCollection implements Countable, IteratorAggregate, JsonSeria
     }
 
     /**
-     * Get the engine instance for subclass access.
-     */
-    protected function getEngineInstance(): ?EngineInterface
-    {
-        return $this->engine;
-    }
-
-    /**
      * Convert collection to array.
      *
      * @return array<int|string, array<string, mixed>>|array<string, mixed>
@@ -208,6 +200,14 @@ readonly class DataCollection implements Countable, IteratorAggregate, JsonSeria
     }
 
     /**
+     * Get the engine instance for subclass access.
+     */
+    protected function getEngineInstance(): ?EngineInterface
+    {
+        return $this->engine;
+    }
+
+    /**
      * Hydrate items into DTOs.
      *
      * @param  iterable<mixed>  $items
@@ -230,6 +230,7 @@ readonly class DataCollection implements Countable, IteratorAggregate, JsonSeria
                 // Otherwise hydrate it
                 /** @var class-string<T> $dtoClass */
                 $dtoClass = $this->dtoClass;
+
                 /** @var T $hydrated */
                 $hydrated = $engine->hydrate($dtoClass, $item, $this->context);
                 $result[$key] = $hydrated;
@@ -241,6 +242,6 @@ readonly class DataCollection implements Countable, IteratorAggregate, JsonSeria
 
     private function getEngine(): EngineInterface
     {
-        return $this->engine ?? (new EngineFactory)->create();
+        return $this->engine ?? new EngineFactory()->create();
     }
 }

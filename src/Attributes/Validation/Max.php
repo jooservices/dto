@@ -20,7 +20,7 @@ use Attribute;
 final readonly class Max
 {
     public function __construct(
-        public int|float $max,
+        public float|int $max,
         public ?string $message = null,
     ) {}
 

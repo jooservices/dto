@@ -29,7 +29,7 @@ final class DiscriminatorMapTest extends TestCase
 
     public function test_constructor_with_callable_discriminator(): void
     {
-        $callable = fn (array $data) => $data['payment_type'] ?? 'default';
+        $callable = static fn (array $data) => $data['payment_type'] ?? 'default';
         $map = ['card' => 'CreditCardDto'];
 
         // @phpstan-ignore argument.type
@@ -94,7 +94,7 @@ final class DiscriminatorMapTest extends TestCase
 
         // @phpstan-ignore argument.type
         $attr = new DiscriminatorMap(
-            discriminator: fn (array $data) => $data['payment_type'] ?? $data['type'] ?? 'default',
+            discriminator: static fn (array $data) => $data['payment_type'] ?? $data['type'] ?? 'default',
             map: $map,
         );
 
@@ -113,10 +113,11 @@ final class DiscriminatorMapTest extends TestCase
 
         // @phpstan-ignore argument.type
         $attr = new DiscriminatorMap(
-            discriminator: function (array $data) {
+            discriminator: static function (array $data) {
                 if (isset($data['credit_card'])) {
                     return 'card';
                 }
+
                 if (isset($data['paypal_email'])) {
                     return 'paypal';
                 }

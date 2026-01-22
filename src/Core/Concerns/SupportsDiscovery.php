@@ -93,6 +93,44 @@ trait SupportsDiscovery
     }
 
     /**
+     * Resolve pending class registrations.
+     *
+     * Called before iteration to instantiate any classes registered via registerClass().
+     */
+    protected function resolvePendingClasses(): void
+    {
+        foreach ($this->pendingClasses as $pending) {
+            $className = $pending['class'];
+            $priority = $pending['priority'];
+
+            /** @var object $instance */
+            $instance = $this->container !== null
+                ? $this->container->get($className)
+                : new $className;
+
+            $this->doRegister($instance, $priority);
+        }
+
+        $this->pendingClasses = [];
+    }
+
+    /**
+     * Get the interface that items must implement.
+     *
+     * @return class-string
+     */
+    abstract protected function getItemInterface(): string;
+
+    /**
+     * Internal registration method called by discovery.
+     * Must be implemented by the using class to delegate to the public register method.
+     *
+     * @param  object  $instance  The instance to register
+     * @param  int  $priority  Registration priority
+     */
+    abstract protected function doRegister(object $instance, int $priority): void;
+
+    /**
      * Process a discovered file and register it if valid.
      */
     private function processDiscoveredFile(SplFileInfo $file, string $directory, string $namespace): void
@@ -145,28 +183,6 @@ trait SupportsDiscovery
     }
 
     /**
-     * Resolve pending class registrations.
-     *
-     * Called before iteration to instantiate any classes registered via registerClass().
-     */
-    protected function resolvePendingClasses(): void
-    {
-        foreach ($this->pendingClasses as $pending) {
-            $className = $pending['class'];
-            $priority = $pending['priority'];
-
-            /** @var object $instance */
-            $instance = $this->container !== null
-                ? $this->container->get($className)
-                : new $className;
-
-            $this->doRegister($instance, $priority);
-        }
-
-        $this->pendingClasses = [];
-    }
-
-    /**
      * Convert a file path to a fully qualified class name.
      */
     private function fileToClassName(SplFileInfo $file, string $baseDir, string $namespace): ?string
@@ -177,20 +193,4 @@ trait SupportsDiscovery
 
         return $namespace.$relativePath;
     }
-
-    /**
-     * Get the interface that items must implement.
-     *
-     * @return class-string
-     */
-    abstract protected function getItemInterface(): string;
-
-    /**
-     * Internal registration method called by discovery.
-     * Must be implemented by the using class to delegate to the public register method.
-     *
-     * @param  object  $instance  The instance to register
-     * @param  int  $priority  Registration priority
-     */
-    abstract protected function doRegister(object $instance, int $priority): void;
 }

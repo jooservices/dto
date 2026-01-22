@@ -199,6 +199,7 @@ final class OpenApiGeneratorTest extends TestCase
     {
         // Convert indexed array to associative array keyed by property name
         $indexedProps = [];
+
         foreach ($properties as $prop) {
             $indexedProps[$prop->name] = $prop;
         }
