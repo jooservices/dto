@@ -102,8 +102,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, json, xdebug
-          coverage: xdebug
+          extensions: mbstring, json
+          coverage: pcov
 
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3

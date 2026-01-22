@@ -47,7 +47,7 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test:coverage": "XDEBUG_MODE=coverage phpunit --coverage-html coverage --coverage-clover coverage.xml",
+        "test:coverage": "phpunit --coverage-html coverage --coverage-clover coverage.xml",
         "pint": "pint",
         "pint:test": "pint --test",
         "phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=512M",
