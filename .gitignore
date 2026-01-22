@@ -51,7 +51,7 @@ phpcs.xml.cache
 # PHPStan
 .phpstan/
 .phpstan.cache
-phpstan-baseline.neon
+# phpstan-baseline.neon - Keep in repo for CI/CD
 phpstan-baseline.php
 
 # PHPMD

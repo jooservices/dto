@@ -1,0 +1,103 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Only booleans are allowed in a negated boolean, int\|false given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: src/Attributes/DefaultFrom.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Attributes\\DiscriminatorMap\:\:__construct\(\) has parameter \$discriminator with no signature specified for Closure\.$#'
+			identifier: missingType.callable
+			count: 1
+			path: src/Attributes/DiscriminatorMap.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Attributes/DiscriminatorMap.php
+
+		-
+			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
+			identifier: equal.notAllowed
+			count: 1
+			path: src/Core/Dto.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Dto\:\:unless\(\) has parameter \$properties with no signature specified for callable\.$#'
+			identifier: missingType.callable
+			count: 1
+			path: src/Core/Dto.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Dto\:\:when\(\) has parameter \$properties with no signature specified for callable\.$#'
+			identifier: missingType.callable
+			count: 1
+			path: src/Core/Dto.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Dto\:\:when\(\) should return array\<string, mixed\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/Dto.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Optional\:\:empty\(\) should return JOOservices\\Dto\\Core\\Optional\<U\> but returns JOOservices\\Dto\\Core\\Optional\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Optional\:\:filter\(\) should return JOOservices\\Dto\\Core\\Optional\<T\> but returns JOOservices\\Dto\\Core\\Optional\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Optional\:\:ifEmpty\(\) has parameter \$action with no signature specified for callable\.$#'
+			identifier: missingType.callable
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Optional\:\:map\(\) should return JOOservices\\Dto\\Core\\Optional\<U\> but returns JOOservices\\Dto\\Core\\Optional\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\Optional\:\:of\(\) should return JOOservices\\Dto\\Core\\Optional\<U\> but returns JOOservices\\Dto\\Core\\Optional\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Template type U of method JOOservices\\Dto\\Core\\Optional\:\:empty\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: src/Core/Optional.php
+
+		-
+			message: '#^Method JOOservices\\Dto\\Core\\PartialDtoBuilder\:\:from\(\) should return object but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Core/PartialDtoBuilder.php
+
+		-
+			message: '#^Parameter \$map of class JOOservices\\Dto\\Attributes\\DiscriminatorMap constructor expects array\<string, class\-string\>, array\<string, string\> given\.$#'
+			identifier: argument.type
+			count: 7
+			path: tests/Unit/Attributes/DiscriminatorMapTest.php
+
+		-
+			message: '#^Parameter \#2 \$property of function property_exists expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/Unit/Core/Concerns/SupportsArrayAccessTest.php
+
+		-
+			message: '#^Part \$offset \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: tests/Unit/Core/Concerns/SupportsArrayAccessTest.php
