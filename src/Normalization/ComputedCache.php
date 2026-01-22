@@ -19,33 +19,40 @@ final class ComputedCache
     {
         self::ensureInitialized();
 
-        if (! isset(self::$cache[$dto])) {
+        $cache = self::$cache;
+        if ($cache === null || ! isset($cache[$dto])) {
             return null;
         }
 
-        return self::$cache[$dto][$propertyName] ?? null;
+        return $cache[$dto][$propertyName] ?? null;
     }
 
     public static function set(object $dto, string $propertyName, mixed $value): void
     {
         self::ensureInitialized();
 
-        if (! isset(self::$cache[$dto])) {
-            self::$cache[$dto] = [];
+        $cache = self::$cache;
+        if ($cache === null) {
+            return;
         }
 
-        self::$cache[$dto][$propertyName] = $value;
+        if (! isset($cache[$dto])) {
+            $cache[$dto] = [];
+        }
+
+        $cache[$dto][$propertyName] = $value;
     }
 
     public static function has(object $dto, string $propertyName): bool
     {
         self::ensureInitialized();
 
-        if (! isset(self::$cache[$dto])) {
+        $cache = self::$cache;
+        if ($cache === null || ! isset($cache[$dto])) {
             return false;
         }
 
-        return array_key_exists($propertyName, self::$cache[$dto]);
+        return array_key_exists($propertyName, $cache[$dto]);
     }
 
     /**
@@ -55,8 +62,9 @@ final class ComputedCache
     {
         self::ensureInitialized();
 
-        if (isset(self::$cache[$dto])) {
-            unset(self::$cache[$dto]);
+        $cache = self::$cache;
+        if ($cache !== null && isset($cache[$dto])) {
+            unset($cache[$dto]);
         }
     }
 
