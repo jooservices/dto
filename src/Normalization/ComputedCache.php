@@ -15,15 +15,6 @@ final class ComputedCache
     /** @var WeakMap<object, array<string, mixed>> */
     private static WeakMap $cache;
 
-    private static function ensureInitialized(): void
-    {
-        if (! isset(self::$cache)) {
-            /** @var WeakMap<object, array<string, mixed>> $weakMap */
-            $weakMap = new WeakMap;
-            self::$cache = $weakMap;
-        }
-    }
-
     public static function get(object $dto, string $propertyName): mixed
     {
         self::ensureInitialized();
@@ -77,5 +68,14 @@ final class ComputedCache
         /** @var WeakMap<object, array<string, mixed>> $weakMap */
         $weakMap = new WeakMap;
         self::$cache = $weakMap;
+    }
+
+    private static function ensureInitialized(): void
+    {
+        if (! isset(self::$cache)) {
+            /** @var WeakMap<object, array<string, mixed>> $weakMap */
+            $weakMap = new WeakMap;
+            self::$cache = $weakMap;
+        }
     }
 }

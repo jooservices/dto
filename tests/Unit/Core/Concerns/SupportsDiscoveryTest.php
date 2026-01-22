@@ -88,7 +88,7 @@ final class SupportsDiscoveryTest extends TestCase
     public function test_discover_from_ignores_non_php_files(): void
     {
         $tempDir = sys_get_temp_dir().self::TEMP_DIR_PREFIX.uniqid();
-        mkdir($tempDir, 0777, true);
+        mkdir($tempDir, 0o777, true);
 
         file_put_contents($tempDir.'/readme.txt', 'This is not a PHP file');
 
@@ -117,7 +117,7 @@ final class SupportsDiscoveryTest extends TestCase
     public function test_discover_from_empty_directory(): void
     {
         $tempDir = sys_get_temp_dir().self::TEMP_DIR_PREFIX.uniqid();
-        mkdir($tempDir, 0777, true);
+        mkdir($tempDir, 0o777, true);
 
         try {
             $this->registry->discoverFrom($tempDir, 'EmptyNamespace');

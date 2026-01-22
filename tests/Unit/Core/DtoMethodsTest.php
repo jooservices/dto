@@ -148,7 +148,7 @@ final class DtoMethodsTest extends TestCase
     {
         $dto = TestDtoForMethods::from(['name' => 'John', 'age' => 30, 'email' => 'john@example.com']);
 
-        $result = $dto->when(true, fn () => ['computed' => 'value']);
+        $result = $dto->when(true, static fn () => ['computed' => 'value']);
 
         $this->assertSame(['computed' => 'value'], $result);
     }

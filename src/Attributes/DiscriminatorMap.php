@@ -16,11 +16,11 @@ use Closure;
 final readonly class DiscriminatorMap
 {
     /**
-     * @param  string|Closure  $discriminator  Field name or Closure(array $data): string
+     * @param  Closure|string  $discriminator  Field name or Closure(array $data): string
      * @param  array<string, class-string>  $map  Mapping from discriminator value to class name
      */
     public function __construct(
-        public string|Closure $discriminator,
+        public Closure|string $discriminator,
         public array $map,
     ) {}
 

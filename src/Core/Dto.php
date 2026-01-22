@@ -18,6 +18,18 @@ abstract class Dto implements JsonSerializable
     use NormalizesToOutput;
 
     /**
+     * Transform input data before hydration (static context).
+     * Override to modify/validate raw input data before DTO instantiation.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected static function transformInput(array $data): array
+    {
+        return $data;
+    }
+
+    /**
      * Create a new instance with modified property values (immutable update).
      *
      * @param  array<string, mixed>  $values
@@ -52,36 +64,6 @@ abstract class Dto implements JsonSerializable
         }
 
         return $reflection->newInstanceArgs($args);
-    }
-
-    /**
-     * Transform input data before hydration (static context).
-     * Override to modify/validate raw input data before DTO instantiation.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    protected static function transformInput(array $data): array
-    {
-        return $data;
-    }
-
-    /**
-     * Hook called after successful hydration (instance context).
-     * Override to add post-construction logic or cross-field validation.
-     */
-    protected function afterHydration(): void
-    {
-        // Override in subclasses
-    }
-
-    /**
-     * Hook called before serialization (instance context).
-     * Override to modify instance state before toArray().
-     */
-    protected function beforeSerialization(): void
-    {
-        // Override in subclasses
     }
 
     /**
@@ -195,10 +177,10 @@ abstract class Dto implements JsonSerializable
     /**
      * Conditionally add properties to serialization.
      *
-     * @param  callable|array<string, mixed>  $properties
+     * @param  array<string, mixed>|callable  $properties
      * @return array<string, mixed>
      */
-    public function when(bool $condition, callable|array $properties): array
+    public function when(bool $condition, array|callable $properties): array
     {
         if (! $condition) {
             return [];
@@ -210,12 +192,30 @@ abstract class Dto implements JsonSerializable
     /**
      * Inverse of when() - add properties unless condition is true.
      *
-     * @param  callable|array<string, mixed>  $properties
+     * @param  array<string, mixed>|callable  $properties
      * @return array<string, mixed>
      */
-    public function unless(bool $condition, callable|array $properties): array
+    public function unless(bool $condition, array|callable $properties): array
     {
         return $this->when(! $condition, $properties);
+    }
+
+    /**
+     * Hook called after successful hydration (instance context).
+     * Override to add post-construction logic or cross-field validation.
+     */
+    protected function afterHydration(): void
+    {
+        // Override in subclasses
+    }
+
+    /**
+     * Hook called before serialization (instance context).
+     * Override to modify instance state before toArray().
+     */
+    protected function beforeSerialization(): void
+    {
+        // Override in subclasses
     }
 
     /**

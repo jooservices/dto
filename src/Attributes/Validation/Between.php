@@ -20,8 +20,8 @@ use Attribute;
 final readonly class Between
 {
     public function __construct(
-        public int|float $min,
-        public int|float $max,
+        public float|int $min,
+        public float|int $max,
         public ?string $message = null,
     ) {}
 

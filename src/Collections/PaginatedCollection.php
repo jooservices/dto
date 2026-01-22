@@ -245,9 +245,7 @@ readonly class PaginatedCollection extends DataCollection
         $property = $reflection->getProperty('dtoClass');
 
         /** @var class-string<\JOOservices\Dto\Core\Dto> $value */
-        $value = $property->getValue($this);
-
-        return $value;
+        return $property->getValue($this);
     }
 
     /**
@@ -260,9 +258,7 @@ readonly class PaginatedCollection extends DataCollection
         $property = $reflection->getProperty('context');
 
         /** @var Context|null $value */
-        $value = $property->getValue($this);
-
-        return $value;
+        return $property->getValue($this);
     }
 
     /**
@@ -275,8 +271,6 @@ readonly class PaginatedCollection extends DataCollection
         $property = $reflection->getProperty('wrapKey');
 
         /** @var string|null $value */
-        $value = $property->getValue($this);
-
-        return $value;
+        return $property->getValue($this);
     }
 }

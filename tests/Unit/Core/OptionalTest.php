@@ -59,7 +59,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::of('value');
 
-        $result = $optional->orElseGet(fn () => 'computed');
+        $result = $optional->orElseGet(static fn () => 'computed');
 
         $this->assertSame('value', $result);
     }
@@ -69,7 +69,7 @@ final class OptionalTest extends TestCase
         $optional = Optional::empty();
         $called = false;
 
-        $result = $optional->orElseGet(function () use (&$called) {
+        $result = $optional->orElseGet(static function () use (&$called) {
             $called = true;
 
             return 'computed';
@@ -83,7 +83,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::of('value');
 
-        $result = $optional->orElseThrow(fn () => new Exception('Error'));
+        $result = $optional->orElseThrow(static fn () => new Exception('Error'));
 
         $this->assertSame('value', $result);
     }
@@ -95,7 +95,7 @@ final class OptionalTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No value');
 
-        $optional->orElseThrow(fn () => new LogicException('No value'));
+        $optional->orElseThrow(static fn () => new LogicException('No value'));
     }
 
     public function test_if_present_executes_callback_when_present(): void
@@ -103,7 +103,7 @@ final class OptionalTest extends TestCase
         $optional = Optional::of('value');
         $result = null;
 
-        $optional->ifPresent(function ($value) use (&$result) {
+        $optional->ifPresent(static function ($value) use (&$result): void {
             $result = $value;
         });
 
@@ -115,7 +115,7 @@ final class OptionalTest extends TestCase
         $optional = Optional::empty();
         $called = false;
 
-        $optional->ifPresent(function () use (&$called) {
+        $optional->ifPresent(static function () use (&$called): void {
             $called = true;
         });
 
@@ -127,7 +127,7 @@ final class OptionalTest extends TestCase
         $optional = Optional::empty();
         $called = false;
 
-        $optional->ifEmpty(function () use (&$called) {
+        $optional->ifEmpty(static function () use (&$called): void {
             $called = true;
         });
 
@@ -139,7 +139,7 @@ final class OptionalTest extends TestCase
         $optional = Optional::of('value');
         $called = false;
 
-        $optional->ifEmpty(function () use (&$called) {
+        $optional->ifEmpty(static function () use (&$called): void {
             $called = true;
         });
 
@@ -150,7 +150,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::of(5);
 
-        $result = $optional->map(fn ($x) => $x * 2);
+        $result = $optional->map(static fn ($x) => $x * 2);
 
         $this->assertTrue($result->isPresent());
         $this->assertSame(10, $result->get());
@@ -162,7 +162,7 @@ final class OptionalTest extends TestCase
 
         $result = $optional->map(
             /** @param mixed $x */
-            fn ($x) => is_int($x) ? $x * 2 : 0,
+            static fn ($x) => is_int($x) ? $x * 2 : 0,
         );
 
         $this->assertTrue($result->isEmpty());
@@ -172,7 +172,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::of(10);
 
-        $result = $optional->filter(fn ($x) => $x > 5);
+        $result = $optional->filter(static fn ($x) => $x > 5);
 
         $this->assertTrue($result->isPresent());
         $this->assertSame(10, $result->get());
@@ -182,7 +182,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::of(3);
 
-        $result = $optional->filter(fn ($x) => $x > 5);
+        $result = $optional->filter(static fn ($x) => $x > 5);
 
         $this->assertTrue($result->isEmpty());
     }
@@ -191,7 +191,7 @@ final class OptionalTest extends TestCase
     {
         $optional = Optional::empty();
 
-        $result = $optional->filter(fn ($x) => true);
+        $result = $optional->filter(static fn ($x) => true);
 
         $this->assertTrue($result->isEmpty());
     }
@@ -199,9 +199,9 @@ final class OptionalTest extends TestCase
     public function test_chaining(): void
     {
         $optional = Optional::of(5)
-            ->map(fn ($x) => $x * 2)
-            ->filter(fn ($x) => $x > 5)
-            ->map(fn ($x) => (string) $x);
+            ->map(static fn ($x) => $x * 2)
+            ->filter(static fn ($x) => $x > 5)
+            ->map(static fn ($x) => (string) $x);
 
         $this->assertSame('10', $optional->get());
     }

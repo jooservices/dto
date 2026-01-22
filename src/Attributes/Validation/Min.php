@@ -20,7 +20,7 @@ use Attribute;
 final readonly class Min
 {
     public function __construct(
-        public int|float $min,
+        public float|int $min,
         public ?string $message = null,
     ) {}
 

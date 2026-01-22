@@ -30,6 +30,15 @@ final readonly class Context
         public array $globalPipeline = [],
     ) {}
 
+    /**
+     * Create a new context with permissive casting mode.
+     * In permissive mode, all types are treated as nullable and failed casts return null.
+     */
+    public static function permissive(): self
+    {
+        return new self(castMode: self::CAST_MODE_PERMISSIVE);
+    }
+
     public function withNamingStrategy(?NamingStrategyInterface $strategy): self
     {
         return new self(
@@ -147,15 +156,6 @@ final readonly class Context
     public function isPermissiveMode(): bool
     {
         return $this->castMode === self::CAST_MODE_PERMISSIVE;
-    }
-
-    /**
-     * Create a new context with permissive casting mode.
-     * In permissive mode, all types are treated as nullable and failed casts return null.
-     */
-    public static function permissive(): self
-    {
-        return new self(castMode: self::CAST_MODE_PERMISSIVE);
     }
 
     public function getCustom(string $key, mixed $default = null): mixed
