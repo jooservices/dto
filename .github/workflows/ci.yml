@@ -1,6 +1,6 @@
 # Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
 # Never uses jooservices/workflows.
-# PHP image: docker compose build (host daemon). No Buildx — runner1 cannot pull moby/buildkit from Docker Hub (IPv6 unreachable).
+# PHP image: tools/ci/docker-compose (host daemon). No Buildx — runner1 cannot pull moby/buildkit from Docker Hub (IPv6 unreachable).
 # actions/cache@v5 requires Actions Runner >= 2.327.1 (Node 24 action runtime).
 name: CI
 
@@ -41,7 +41,7 @@ jobs:
         uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
         uses: actions/cache@v5
@@ -54,10 +54,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Composer validate
-        run: docker compose run --rm php composer validate --strict
+        run: tools/ci/docker-compose run --rm php composer validate --strict
 
   lint:
     name: Lint
@@ -83,7 +83,7 @@ jobs:
         uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
         uses: actions/cache@v5
@@ -96,16 +96,16 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Run ${{ matrix.tool }}
         run: |
           case "${{ matrix.tool }}" in
-            pint) docker compose run --rm php composer lint:pint ;;
-            phpcs) docker compose run --rm php composer lint:phpcs ;;
-            phpstan) docker compose run --rm php composer lint:phpstan ;;
-            phpmd) docker compose run --rm php composer lint:phpmd ;;
-            php-cs-fixer) docker compose run --rm php composer lint:cs ;;
+            pint) tools/ci/docker-compose run --rm php composer lint:pint ;;
+            phpcs) tools/ci/docker-compose run --rm php composer lint:phpcs ;;
+            phpstan) tools/ci/docker-compose run --rm php composer lint:phpstan ;;
+            phpmd) tools/ci/docker-compose run --rm php composer lint:phpmd ;;
+            php-cs-fixer) tools/ci/docker-compose run --rm php composer lint:cs ;;
             *) echo "Unknown tool: ${{ matrix.tool }}"; exit 1 ;;
           esac
 
@@ -129,7 +129,7 @@ jobs:
         uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
         uses: actions/cache@v5
@@ -142,23 +142,23 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Unit suite with coverage
         run: |
           mkdir -p build/coverage
-          docker compose run --rm php ./vendor/bin/phpunit \
+          tools/ci/docker-compose run --rm php ./vendor/bin/phpunit \
             --testsuite=Unit \
             --coverage-clover=build/coverage/clover-Unit.xml
 
       - name: Integration suite with coverage
         run: |
-          docker compose run --rm php ./vendor/bin/phpunit \
+          tools/ci/docker-compose run --rm php ./vendor/bin/phpunit \
             --testsuite=Integration \
             --coverage-clover=build/coverage/clover-Integration.xml
 
       - name: Enforce 85% per-suite floor
-        run: docker compose run --rm php php tools/coverage-enforce.php
+        run: tools/ci/docker-compose run --rm php php tools/coverage-enforce.php
 
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v7
@@ -189,7 +189,7 @@ jobs:
         uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
         uses: actions/cache@v5
@@ -202,10 +202,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Composer audit
-        run: docker compose run --rm php composer audit
+        run: tools/ci/docker-compose run --rm php composer audit
 
       - name: OSV Scanner
         uses: google/osv-scanner-action@6e4298ebc4db23e847df9b2e2de2939d6f066c67 # v2.5.1
@@ -250,7 +250,7 @@ jobs:
         uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Download coverage artifacts
         uses: actions/download-artifact@v8
@@ -262,7 +262,7 @@ jobs:
         run: |
           mkdir -p build/coverage
           if [ -f build/coverage/clover-Unit.xml ] && [ -f build/coverage/clover-Integration.xml ]; then
-            docker compose run --rm php php tools/coverage-merge.php
+            tools/ci/docker-compose run --rm php php tools/coverage-merge.php
           fi
           ls -la build/coverage
 

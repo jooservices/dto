@@ -45,21 +45,21 @@ jobs:
           fi
 
       - name: Build PHP image
-        run: docker compose build php
+        run: tools/ci/docker-compose build php
 
       - name: Install dependencies
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Validate
-        run: docker compose run --rm php composer validate --strict
+        run: tools/ci/docker-compose run --rm php composer validate --strict
 
       - name: Lint
-        run: docker compose run --rm php composer lint
+        run: tools/ci/docker-compose run --rm php composer lint
 
       - name: Test with coverage
         run: |
           mkdir -p build/coverage
-          docker compose run --rm php ./vendor/bin/phpunit \
+          tools/ci/docker-compose run --rm php ./vendor/bin/phpunit \
             --coverage-clover=build/coverage/clover-all.xml
 
       - name: Trivy filesystem scan
@@ -94,13 +94,13 @@ jobs:
           output-file: sbom.spdx.json
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
-        with:
-          generate_release_notes: true
-          files: |
-            sbom.spdx.json
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --generate-notes \
+            sbom.spdx.json
 
       - name: Notify Packagist
         env:
