@@ -3,7 +3,7 @@ name: First interaction
 on:
   issues:
     types: [opened]
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers] no checkout, no untrusted input in the posted message — only actions/first-interaction needs write token to comment on fork PRs
     types: [opened]
 
 permissions:
@@ -19,12 +19,12 @@ jobs:
       - name: Greet first-time contributor
         uses: actions/first-interaction@v3
         with:
-          issue-message: |
+          issue_message: |
             Thanks for opening your first issue!
 
             - Security reports: see [SECURITY.md](https://github.com/jooservices/dto/blob/master/SECURITY.md) — do not post vulnerabilities publicly.
             - Bug reports and features: include reproduction steps and expected behavior.
-          pr-message: |
+          pr_message: |
             Thanks for your first pull request!
 
             Please read [CONTRIBUTING.md](https://github.com/jooservices/dto/blob/master/CONTRIBUTING.md):
