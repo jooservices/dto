@@ -1,0 +1,8 @@
+rules:
+  # This repo deliberately pins actions by version tag (e.g. `@v7`), not by
+  # commit SHA, except where a tag was broken/missing upstream. Tracking
+  # every third-party action to a SHA is a maintenance policy this project
+  # has not adopted, so this audit is disabled rather than left as
+  # permanently-open noise nobody acts on.
+  unpinned-uses:
+    disable: true
