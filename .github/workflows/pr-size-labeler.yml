@@ -23,6 +23,8 @@ jobs:
 
       - name: Size label
         uses: pascalgn/size-label-action@v0.5.4
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           sizes: >
             {
