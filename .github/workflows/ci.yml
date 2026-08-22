@@ -206,7 +206,7 @@ jobs:
         run: docker compose run --rm php composer audit
 
       - name: OSV Scanner
-        uses: google/osv-scanner-action/v2
+        uses: google/osv-scanner-action@v2
         with:
           scan-args: |-
             --recursive
