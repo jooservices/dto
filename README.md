@@ -193,7 +193,6 @@ Workflows run on self-hosted Linux X64 runners:
 | `codeql.yml` | CodeQL analysis for GitHub Actions workflows |
 | `workflow-audit.yml` | actionlint + zizmor on workflow files |
 | `release.yml` | tag gates, Trivy, SBOM, GitHub Release, Packagist |
-| `release-drafter.yml` | draft release notes from merged PRs |
 | `semantic-pr.yml` | Conventional Commits PR title |
 | `pr-labeler.yml` / `pr-size-labeler.yml` | path and size labels |
 | `scorecard.yml` | OpenSSF Scorecard |

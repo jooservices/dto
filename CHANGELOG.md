@@ -13,28 +13,11 @@ All notable changes to this package are documented in this file. Format follows 
 
 ### Added
 
-- GitHub Actions CI on self-hosted Linux X64 runners: validation, lint/test matrices, dependency security, Gitleaks OSS CLI, Semgrep OSS, Codecov, and Sonar
-- CodeQL analysis for GitHub Actions workflows, workflow audit (actionlint + zizmor), commitlint on PR commits, release drafter, Trivy + SBOM on release tags
+GitHub Actions CI on self-hosted Linux X64 runners:
+
+- Validation, lint/test matrices, dependency security, Gitleaks OSS CLI, Semgrep OSS, Codecov, and Sonar
+- CodeQL analysis for GitHub Actions workflows, workflow audit (actionlint + zizmor), commitlint on PR commits, Trivy + SBOM on release tags
 - Housekeeping workflows: stale bot, first-interaction welcome, PR size labels, weekly Markdown link check
-
-### Changed
-
-- CI uses Docker Compose image caching and Composer `vendor/` caching to reduce job time
-- Semgrep runs in OSS mode (no cloud token required)
-
-### BREAKING
-
-- Complete rewrite of every line against a new architecture. Nothing from the previous implementation carries over as-is:
-  - Engine: one process-wide Engine (factory-created, injectable) with LRU `ClassMeta` caches and explicit worker `reset()` replaces the per-class static engine store
-  - Copy helpers (`with()` / `clone()` / `merge()` / `mergeRecursive()`) build through the constructor from the state view instead of a `toArray()` → `from()` round-trip
-  - Exception hierarchy is vendorized under `src/Exceptions/` instead of extending an external package base
-- Zero runtime Composer dependencies. Optional integrations are `suggest`-only: `psr/log`, `psr/http-message`
-- Laravel adapters and `config()` coupling are fully dropped
-- `with()` accepts property names only — never source keys
-- Constructor-less DTOs remain unsupported, now enforced consistently at hydration and copy paths
-- Removed by design: `ArrayAccess`, PSR-11 discovery (`SupportsDiscovery`), WeakMap engine registry, XML/YAML output, compiled hydrator cache
-
-### Added
 
 Core:
 
@@ -83,6 +66,20 @@ Quality of life:
 - `#[RequiredIf]` compares values after casting, not raw pre-cast input
 - Lazy properties are computed only when serialization actually requests them
 - CI: dedicated workflows only (no shared reusable-workflow dependency), self-hosted runner, all PHP jobs in Docker, 85% per-suite coverage floor, Codecov + Sonar uploads required
+- CI uses Docker Compose image caching and Composer `vendor/` caching to reduce job time
+- Semgrep runs in OSS mode (no cloud token required)
+
+### BREAKING
+
+- Complete rewrite of every line against a new architecture. Nothing from the previous implementation carries over as-is:
+  - Engine: one process-wide Engine (factory-created, injectable) with LRU `ClassMeta` caches and explicit worker `reset()` replaces the per-class static engine store
+  - Copy helpers (`with()` / `clone()` / `merge()` / `mergeRecursive()`) build through the constructor from the state view instead of a `toArray()` → `from()` round-trip
+  - Exception hierarchy is vendorized under `src/Exceptions/` instead of extending an external package base
+- Zero runtime Composer dependencies. Optional integrations are `suggest`-only: `psr/log`, `psr/http-message`
+- Laravel adapters and `config()` coupling are fully dropped
+- `with()` accepts property names only — never source keys
+- Constructor-less DTOs remain unsupported, now enforced consistently at hydration and copy paths
+- Removed by design: `ArrayAccess`, PSR-11 discovery (`SupportsDiscovery`), WeakMap engine registry, XML/YAML output, compiled hydrator cache
 
 ### Fixed
 
