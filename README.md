@@ -1,7 +1,7 @@
 # jooservices/dto
 
 [![CI](https://github.com/jooservices/dto/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/jooservices/dto/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/jooservices/dto/branch/develop/graph/badge.svg)](https://codecov.io/gh/jooservices/dto)
+[![codecov](https://codecov.io/gh/jooservices/dto/graph/badge.svg?token=P53R9GC7UL)](https://codecov.io/gh/jooservices/dto)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -190,7 +190,7 @@ Workflows (all on self-hosted `runner1`):
 | --- | --- |
 | `ci.yml` | validate → lint → test (+85% floor) → security → Codecov + Sonar |
 | `commitlint.yml` | Conventional Commits on every PR commit |
-| `codeql.yml` | CodeQL PHP analysis |
+| `codeql.yml` | CodeQL analysis for GitHub Actions workflows |
 | `workflow-audit.yml` | actionlint + zizmor on workflow files |
 | `release.yml` | tag gates, Trivy, SBOM, GitHub Release, Packagist |
 | `release-drafter.yml` | draft release notes from merged PRs |
@@ -202,7 +202,7 @@ Workflows (all on self-hosted `runner1`):
 
 Also: Dependabot (Composer + GitHub Actions), CODEOWNERS, labeler config.
 
-**CI secrets (organization level):** `CODECOV_TOKEN`, `SONAR_TOKEN`, and `SONAR_HOST_URL` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. Grant this repository access when onboarding. No release tag is required to test CI; any push or PR to `develop` or `master` runs the pipeline.
+**CI secrets (organization level):** `CODECOV_TOKEN` and `SONAR_TOKEN` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. `SONAR_HOST_URL` is optional and defaults to `https://sonarcloud.io`. Grant this repository access when onboarding. No release tag is required to test CI; any push or PR to `develop` or `master` runs the pipeline.
 
 Quality gates: Pint (`per` preset) · PHPCS full `PSR12` · PHPStan max level, zero ignores · PHPMD · PHP-CS-Fixer (PHPDoc-only).
 

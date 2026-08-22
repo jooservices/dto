@@ -21,8 +21,15 @@ jobs:
       contents: read
       actions: read
     steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -34,6 +41,6 @@ jobs:
           publish_results: true
 
       - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: results.sarif

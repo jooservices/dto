@@ -12,7 +12,7 @@ All notable changes to this package are documented in this file. Format follows 
 ### Added
 
 - GitHub Actions CI on self-hosted `runner1`: validate, lint, test, security (Composer audit, OSV, Gitleaks, Semgrep OSS, Dependency Review), Codecov + Sonar
-- CodeQL PHP analysis, workflow audit (actionlint + zizmor), commitlint on PR commits, release drafter, Trivy + SBOM on release tags
+- CodeQL analysis for GitHub Actions workflows, workflow audit (actionlint + zizmor), commitlint on PR commits, release drafter, Trivy + SBOM on release tags
 - Housekeeping workflows: stale bot, first-interaction welcome, PR size labels, weekly Markdown link check
 
 ### Changed

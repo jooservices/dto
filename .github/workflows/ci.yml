@@ -1,5 +1,7 @@
 # Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
 # Never uses jooservices/workflows.
+# PHP image: tools/ci/docker-compose (host daemon). No Buildx — runner1 cannot pull moby/buildkit from Docker Hub (IPv6 unreachable).
+# actions/cache@v5 requires Actions Runner >= 2.327.1 (Node 24 action runtime).
 name: CI
 
 on:
@@ -9,7 +11,7 @@ on:
     branches: [master, develop]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -25,24 +27,24 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: jooservices/dto:php85
-          cache-from: type=gha,scope=dto-php85
-          cache-to: type=gha,mode=max,scope=dto-php85
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: vendor-cache
         with:
           path: vendor
@@ -52,39 +54,49 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Composer validate
-        run: docker compose run --rm php composer validate --strict
+        run: tools/ci/docker-compose run --rm php composer validate --strict
 
   lint:
-    name: Lint
+    name: Lint (${{ matrix.name }})
     needs: [validate]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        tool: [pint, phpcs, phpstan, phpmd, php-cs-fixer]
+        include:
+          - name: Pint
+            command: composer lint:pint
+          - name: PHPCS
+            command: composer lint:phpcs
+          - name: PHPStan
+            command: composer lint:phpstan
+          - name: PHPMD
+            command: composer lint:phpmd
+          - name: PHP-CS-Fixer
+            command: composer lint:cs
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: jooservices/dto:php85
-          cache-from: type=gha,scope=dto-php85
-          cache-to: type=gha,mode=max,scope=dto-php85
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: vendor-cache
         with:
           path: vendor
@@ -94,43 +106,43 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
-      - name: Run ${{ matrix.tool }}
-        run: |
-          case "${{ matrix.tool }}" in
-            pint) docker compose run --rm php composer lint:pint ;;
-            phpcs) docker compose run --rm php composer lint:phpcs ;;
-            phpstan) docker compose run --rm php composer lint:phpstan ;;
-            phpmd) docker compose run --rm php composer lint:phpmd ;;
-            php-cs-fixer) docker compose run --rm php composer lint:cs ;;
-            *) echo "Unknown tool: ${{ matrix.tool }}"; exit 1 ;;
-          esac
+      - name: Run linter
+        run: tools/ci/docker-compose run --rm php ${{ matrix.command }}
 
   test:
-    name: Test
+    name: Test (${{ matrix.name }})
     needs: [lint]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Unit
+            suite: Unit
+          - name: Integration
+            suite: Integration
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: jooservices/dto:php85
-          cache-from: type=gha,scope=dto-php85
-          cache-to: type=gha,mode=max,scope=dto-php85
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: vendor-cache
         with:
           path: vendor
@@ -140,57 +152,48 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
-      - name: Unit suite with coverage
+      - name: Run test suite with coverage
         run: |
           mkdir -p build/coverage
-          docker compose run --rm php ./vendor/bin/phpunit \
-            --testsuite=Unit \
-            --coverage-clover=build/coverage/clover-Unit.xml
+          tools/ci/docker-compose run --rm php ./vendor/bin/phpunit \
+            --testsuite=${{ matrix.suite }} \
+            --coverage-clover=build/coverage/clover-${{ matrix.suite }}.xml
 
-      - name: Integration suite with coverage
-        run: |
-          docker compose run --rm php ./vendor/bin/phpunit \
-            --testsuite=Integration \
-            --coverage-clover=build/coverage/clover-Integration.xml
-
-      - name: Enforce 85% per-suite floor
-        run: docker compose run --rm php php tools/coverage-enforce.php
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v7
         with:
-          name: coverage-clover
-          path: build/coverage/clover-*.xml
+          name: coverage-${{ matrix.suite }}
+          path: build/coverage/clover-${{ matrix.suite }}.xml
           if-no-files-found: error
 
-  security:
-    name: Security
-    needs: [test]
+  dependency-security:
+    name: Dependency security
+    needs: [validate]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: jooservices/dto:php85
-          cache-from: type=gha,scope=dto-php85
-          cache-to: type=gha,mode=max,scope=dto-php85
+        run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: vendor-cache
         with:
           path: vendor
@@ -200,83 +203,144 @@ jobs:
 
       - name: Install dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+        run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Composer audit
-        run: docker compose run --rm php composer audit
+        run: tools/ci/docker-compose run --rm php composer audit
 
       - name: OSV Scanner
-        uses: google/osv-scanner-action/v2
+        uses: google/osv-scanner-action/osv-scanner-action@6e4298ebc4db23e847df9b2e2de2939d6f066c67 # v2.5.1
         with:
           scan-args: |-
             --recursive
             .
 
-      - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Dependency Review
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v5
+
+  secret-scan:
+    name: Secret scan
+    needs: [validate]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
+
+      - name: Gitleaks OSS CLI
+        run: |
+          docker run --rm \
+            --volume "${GITHUB_WORKSPACE}:/repo:ro" \
+            --workdir /repo \
+            ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:b109bc5f8f76a38196a3e413704fc5b9e3c32360bce4e4b603bd6f45b3721dbb \
+            detect --source . --redact --exit-code 1
+
+  sast:
+    name: SAST
+    needs: [validate]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
 
       - name: Semgrep (OSS)
         uses: semgrep/semgrep-action@v1
         with:
           config: p/php
 
-      - name: Dependency Review
-        if: github.event_name == 'pull_request'
-        uses: actions/dependency-review-action@v4
-
   coverage:
     name: Coverage upload
-    needs: [security]
+    needs: [test, dependency-security, secret-scan, sast]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
     steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Prepare self-hosted Docker
+        uses: ./.github/actions/self-hosted-prepare
 
       - name: Build PHP image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: jooservices/dto:php85
-          cache-from: type=gha,scope=dto-php85
-          cache-to: type=gha,mode=max,scope=dto-php85
+        run: tools/ci/docker-compose build php
 
       - name: Download coverage artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
-          name: coverage-clover
-          path: build/coverage
+          pattern: coverage-*
+          path: build/coverage/matrix
+          merge-multiple: true
 
-      - name: Merge clover reports
+      - name: Enforce coverage and merge Clover reports
         run: |
-          mkdir -p build/coverage
-          if [ -f build/coverage/clover-Unit.xml ] && [ -f build/coverage/clover-Integration.xml ]; then
-            docker compose run --rm php php tools/coverage-merge.php
-          fi
+          tools/ci/docker-compose run --rm php php tools/coverage-enforce.php build/coverage/matrix/clover-Unit.xml
+          tools/ci/docker-compose run --rm php php tools/coverage-enforce.php build/coverage/matrix/clover-Integration.xml
+          tools/ci/docker-compose run --rm php php tools/coverage-merge.php \
+            build/coverage/matrix/clover-Unit.xml \
+            build/coverage/matrix/clover-Integration.xml \
+            build/coverage/clover-combined.xml
           ls -la build/coverage
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: build/coverage/clover-combined.xml
           fail_ci_if_error: true
           verbose: true
 
-      - name: SonarQube Scan
+      - name: Resolve SonarQube host URL
+        id: sonar-config
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          set -euo pipefail
+          host_url="${SONAR_HOST_URL:-https://sonarcloud.io}"
+          host_url="${host_url%/}"
+          case "${host_url}" in
+            http://*|https://*) ;;
+            *) host_url="https://${host_url}" ;;
+          esac
+          if [[ ! "${host_url}" =~ ^https?://[^[:space:]/]+ ]]; then
+            echo "SONAR_HOST_URL must be a valid HTTP(S) URL"
+            exit 1
+          fi
+          echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload SonarQube analysis
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}
         with:
           args: >
             -Dsonar.php.coverage.reportPaths=build/coverage/clover-combined.xml
