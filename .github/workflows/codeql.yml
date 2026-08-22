@@ -9,8 +9,8 @@ on:
     - cron: '0 6 * * 1'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: dto-runner1-workspace
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -23,6 +23,13 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     steps:
+      - name: Repair workspace permissions
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
+            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
+              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
+          fi
+
       - name: Checkout
         uses: actions/checkout@v7
 

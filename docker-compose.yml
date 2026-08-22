@@ -9,4 +9,5 @@ services:
       - .:/app
     environment:
       COMPOSER_CACHE_DIR: /tmp/composer-cache
+    user: "${DOCKER_UID:-0}:${DOCKER_GID:-0}"
     tty: true
