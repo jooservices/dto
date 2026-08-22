@@ -9,20 +9,18 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-08-22
+
 ### Added
 
-- GitHub Actions CI on self-hosted `runner1`: validate, lint, test, security (Composer audit, OSV, Gitleaks, Semgrep OSS, Dependency Review), Codecov + Sonar
+- GitHub Actions CI on self-hosted Linux X64 runners: validation, lint/test matrices, dependency security, Gitleaks OSS CLI, Semgrep OSS, Codecov, and Sonar
 - CodeQL analysis for GitHub Actions workflows, workflow audit (actionlint + zizmor), commitlint on PR commits, release drafter, Trivy + SBOM on release tags
 - Housekeeping workflows: stale bot, first-interaction welcome, PR size labels, weekly Markdown link check
 
 ### Changed
 
-- CI uses Docker Buildx GHA cache and Composer `vendor/` cache to reduce job time
+- CI uses Docker Compose image caching and Composer `vendor/` caching to reduce job time
 - Semgrep runs in OSS mode (no cloud token required)
-
-## [3.0.0] - Unreleased
-
-First public line of the rebuild. Release date pending maintainer approval; no tag / Packagist / GitHub Release before that.
 
 ### BREAKING
 

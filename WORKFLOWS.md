@@ -1,8 +1,9 @@
 # GitHub Actions workflow flow
 
 This document describes the workflows currently defined in
-`.github/workflows/`. All jobs run on the self-hosted `runner1` Linux X64
-runner. PHP-related commands run through the repository Docker Compose setup.
+`.github/workflows/`. All jobs run on self-hosted Linux X64 runners in the
+repository runner pool. PHP-related commands run through the repository Docker
+Compose setup.
 
 ## Overall event flow
 
