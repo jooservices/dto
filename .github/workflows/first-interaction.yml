@@ -1,0 +1,34 @@
+name: First interaction
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    name: Welcome contributor
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - name: Greet first-time contributor
+        uses: actions/first-interaction@v3
+        with:
+          issue-message: |
+            Thanks for opening your first issue!
+
+            - Security reports: see [SECURITY.md](https://github.com/jooservices/dto/blob/master/SECURITY.md) — do not post vulnerabilities publicly.
+            - Bug reports and features: include reproduction steps and expected behavior.
+          pr-message: |
+            Thanks for your first pull request!
+
+            Please read [CONTRIBUTING.md](https://github.com/jooservices/dto/blob/master/CONTRIBUTING.md):
+            - Target branch: `develop`
+            - Conventional Commits on every commit and PR title
+            - Run `make lint` and `make test` before pushing
+            - Never use `--no-verify`

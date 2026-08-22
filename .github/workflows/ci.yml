@@ -1,0 +1,282 @@
+# Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
+# Never uses jooservices/workflows.
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+  id-token: write
+  actions: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: jooservices/dto:php85
+          cache-from: type=gha,scope=dto-php85
+          cache-to: type=gha,mode=max,scope=dto-php85
+
+      - name: Cache Composer vendor
+        uses: actions/cache@v4
+        id: vendor-cache
+        with:
+          path: vendor
+          key: composer-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-vendor-
+
+      - name: Install dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+
+      - name: Composer validate
+        run: docker compose run --rm php composer validate --strict
+
+  lint:
+    name: Lint
+    needs: [validate]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: [pint, phpcs, phpstan, phpmd, php-cs-fixer]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: jooservices/dto:php85
+          cache-from: type=gha,scope=dto-php85
+          cache-to: type=gha,mode=max,scope=dto-php85
+
+      - name: Cache Composer vendor
+        uses: actions/cache@v4
+        id: vendor-cache
+        with:
+          path: vendor
+          key: composer-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-vendor-
+
+      - name: Install dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+
+      - name: Run ${{ matrix.tool }}
+        run: |
+          case "${{ matrix.tool }}" in
+            pint) docker compose run --rm php composer lint:pint ;;
+            phpcs) docker compose run --rm php composer lint:phpcs ;;
+            phpstan) docker compose run --rm php composer lint:phpstan ;;
+            phpmd) docker compose run --rm php composer lint:phpmd ;;
+            php-cs-fixer) docker compose run --rm php composer lint:cs ;;
+            *) echo "Unknown tool: ${{ matrix.tool }}"; exit 1 ;;
+          esac
+
+  test:
+    name: Test
+    needs: [lint]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: jooservices/dto:php85
+          cache-from: type=gha,scope=dto-php85
+          cache-to: type=gha,mode=max,scope=dto-php85
+
+      - name: Cache Composer vendor
+        uses: actions/cache@v4
+        id: vendor-cache
+        with:
+          path: vendor
+          key: composer-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-vendor-
+
+      - name: Install dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+
+      - name: Unit suite with coverage
+        run: |
+          mkdir -p build/coverage
+          docker compose run --rm php ./vendor/bin/phpunit \
+            --testsuite=Unit \
+            --coverage-clover=build/coverage/clover-Unit.xml
+
+      - name: Integration suite with coverage
+        run: |
+          docker compose run --rm php ./vendor/bin/phpunit \
+            --testsuite=Integration \
+            --coverage-clover=build/coverage/clover-Integration.xml
+
+      - name: Enforce 85% per-suite floor
+        run: docker compose run --rm php php tools/coverage-enforce.php
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-clover
+          path: build/coverage/clover-*.xml
+          if-no-files-found: error
+
+  security:
+    name: Security
+    needs: [test]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: jooservices/dto:php85
+          cache-from: type=gha,scope=dto-php85
+          cache-to: type=gha,mode=max,scope=dto-php85
+
+      - name: Cache Composer vendor
+        uses: actions/cache@v4
+        id: vendor-cache
+        with:
+          path: vendor
+          key: composer-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-vendor-
+
+      - name: Install dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: docker compose run --rm php composer install --no-interaction --prefer-dist
+
+      - name: Composer audit
+        run: docker compose run --rm php composer audit
+
+      - name: OSV Scanner
+        uses: google/osv-scanner-action/v2
+        with:
+          scan-args: |-
+            --recursive
+            .
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Semgrep (OSS)
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/php
+
+      - name: Dependency Review
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+
+  coverage:
+    name: Coverage upload
+    needs: [security]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: jooservices/dto:php85
+          cache-from: type=gha,scope=dto-php85
+          cache-to: type=gha,mode=max,scope=dto-php85
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-clover
+          path: build/coverage
+
+      - name: Merge clover reports
+        run: |
+          mkdir -p build/coverage
+          if [ -f build/coverage/clover-Unit.xml ] && [ -f build/coverage/clover-Integration.xml ]; then
+            docker compose run --rm php php tools/coverage-merge.php
+          fi
+          ls -la build/coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/coverage/clover-combined.xml
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.php.coverage.reportPaths=build/coverage/clover-combined.xml

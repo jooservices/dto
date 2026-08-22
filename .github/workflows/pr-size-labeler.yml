@@ -1,0 +1,35 @@
+name: PR size labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  size-label:
+    name: Label PR by size
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Size label
+        uses: pascalgn/size-label-action@v0.5.4
+        with:
+          sizes: >
+            {
+              "0": "size/XS",
+              "30": "size/S",
+              "100": "size/M",
+              "500": "size/L",
+              "1000": "size/XL",
+              "-1": "size/XXL"
+            }
