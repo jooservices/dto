@@ -57,10 +57,15 @@ flowchart TD
     WA -->|yes| ZM[Zizmor]
 
     CI --> V[Validate]
-    V --> L[Lint]
-    L --> T[Test and coverage]
-    T --> S[Security scans]
-    S --> CU[Merge reports and upload to Codecov]
+    V --> L[Lint matrix]
+    L --> T[Test matrix]
+    V --> DS[Dependency security]
+    V --> SS[Secret scan]
+    V --> SA[SAST]
+    T --> CU[Coverage gate and uploads]
+    DS --> CU
+    SS --> CU
+    SA --> CU
 ```
 
 The CI and PR-policy workflows are independent: a label or title check does
@@ -73,31 +78,33 @@ Concurrent runs for the same Git ref cancel older in-progress runs.
 
 ```mermaid
 flowchart LR
-    V[Validate] --> L[Lint] --> T[Test] --> S[Security] --> C[Coverage upload]
+    V[Validate] --> L[Lint matrix] --> T[Test matrix] --> C[Coverage upload]
+    V --> D[Dependency security]
+    V --> S[Secret scan]
+    V --> A[SAST]
+    D --> C
+    S --> C
+    A --> C
 
     V --- V1[Checkout, prepare runner, build PHP image]
     V --- V2[Restore/install Composer dependencies]
     V --- V3[composer validate --strict]
 
-    L --- L1[Run composer lint]
-    T --- T1[Unit suite + Clover report]
-    T --- T2[Integration suite + Clover report]
-    T --- T3[Enforce 85% coverage floor per suite]
-    T --- T4[Upload coverage-clover artifact]
-    S --- S1[Composer audit]
-    S --- S2[OSV Scanner]
-    S --- S3[Gitleaks OSS CLI in pinned Docker image]
-    S --- S4[Semgrep OSS]
-    S --- S5[Dependency Review on PRs only]
+    L --- L1[Pint, PHPCS, PHPStan, PHPMD, PHP-CS-Fixer]
+    T --- T1[Unit suite + coverage artifact]
+    T --- T2[Integration suite + coverage artifact]
+    D --- D1[Composer audit + OSV Scanner + PR Dependency Review]
+    S --- S1[Gitleaks OSS CLI in pinned Docker image]
+    A --- A1[Semgrep OSS]
     C --- C1[Download coverage artifact]
-    C --- C2[Merge Unit and Integration Clover reports]
-    C --- C3[Upload to Codecov]
+    C --- C2[Enforce 85% per-suite floor and merge reports]
+    C --- C3[Upload to Codecov and SonarQube]
 ```
 
-Each CI job repairs prior Docker-owned workspace files, checks out the source,
-prepares the self-hosted Docker environment, builds the PHP image, and restores
-or installs Composer dependencies as needed. `security` and `coverage` check
-out full Git history.
+Each CI job repairs prior Docker-owned workspace files and checks out the
+source. The validation, lint, test, dependency-security, and coverage jobs
+also prepare Docker and restore or install Composer dependencies. The
+dependency-security, secret-scan, and coverage jobs check out full Git history.
 
 ## Release flow (`release.yml`)
 
@@ -170,7 +177,7 @@ building or running the PHP container.
   Git history with the MIT-licensed Gitleaks OSS CLI. GitHub Secret Scanning
   and Push Protection are enabled in the repository security settings; they
   are not controlled by a workflow file.
-- CI sends coverage only to Codecov. The README currently mentions Sonar in
-  its CI chain, but no workflow uploads coverage to Sonar.
+- The coverage job uploads the merged report to Codecov and SonarQube. It
+  normalizes a scheme-less `SONAR_HOST_URL` to `https://…` before scanning.
 - Release is tag-driven, but its `origin/master` ancestry gate prevents a tag
   from publishing a commit that is not on the production branch.
