@@ -1,7 +1,7 @@
 # jooservices/dto
 
 [![CI](https://github.com/jooservices/dto/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/jooservices/dto/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/jooservices/dto/branch/develop/graph/badge.svg)](https://codecov.io/gh/jooservices/dto)
+[![codecov](https://codecov.io/gh/jooservices/dto/graph/badge.svg?token=P53R9GC7UL)](https://codecov.io/gh/jooservices/dto)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
