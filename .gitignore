@@ -1,0 +1,16 @@
+/vendor/
+/coverage/
+coverage.xml
+/build/
+/.phpunit.cache/
+/.php-cs-fixer.cache
+.phpunit.result.cache
+composer.phar
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+/node_modules/
+!.idea/inspectionProfiles/
+!.idea/watcherTasks.xml
