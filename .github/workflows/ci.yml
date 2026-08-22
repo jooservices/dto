@@ -11,8 +11,8 @@ on:
     branches: [master, develop]
 
 concurrency:
-  group: dto-runner1-workspace
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -64,10 +64,6 @@ jobs:
     needs: [validate]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        tool: [pint, phpcs, phpstan, phpmd, php-cs-fixer]
     steps:
       - name: Repair workspace permissions
         run: |
@@ -98,16 +94,8 @@ jobs:
         if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: tools/ci/docker-compose run --rm php composer install --no-interaction --prefer-dist
 
-      - name: Run ${{ matrix.tool }}
-        run: |
-          case "${{ matrix.tool }}" in
-            pint) tools/ci/docker-compose run --rm php composer lint:pint ;;
-            phpcs) tools/ci/docker-compose run --rm php composer lint:phpcs ;;
-            phpstan) tools/ci/docker-compose run --rm php composer lint:phpstan ;;
-            phpmd) tools/ci/docker-compose run --rm php composer lint:phpmd ;;
-            php-cs-fixer) tools/ci/docker-compose run --rm php composer lint:cs ;;
-            *) echo "Unknown tool: ${{ matrix.tool }}"; exit 1 ;;
-          esac
+      - name: Run linters
+        run: tools/ci/docker-compose run --rm php composer lint
 
   test:
     name: Test

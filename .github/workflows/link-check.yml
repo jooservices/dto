@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: dto-runner1-workspace
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:

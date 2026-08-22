@@ -14,8 +14,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: dto-runner1-workspace
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

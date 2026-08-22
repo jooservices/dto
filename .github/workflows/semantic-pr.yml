@@ -8,7 +8,7 @@ on:
       - synchronize
 
 concurrency:
-  group: dto-runner1-workspace
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
