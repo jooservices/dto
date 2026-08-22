@@ -14,21 +14,16 @@ concurrency:
 jobs:
   scorecard:
     name: Scorecard Analysis
-    runs-on: [self-hosted, Linux, X64]
+    # ossf/scorecard-action's publish_results requires a verifiable GitHub-hosted
+    # Ubuntu runner — it cannot attest self-hosted environments. This is the one
+    # workflow in this repo that runs off runner1 by necessity.
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
       id-token: write
       contents: read
       actions: read
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v7
         with:
