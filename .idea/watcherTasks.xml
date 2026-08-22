@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectTasksOptions">
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="--dirty"/>
+      <option name="checkSyntaxErrors" value="true"/>
+      <option name="description" value="Pint format on save (Docker)"/>
+      <option name="exitCodeBehavior" value="ERROR"/>
+      <option name="fileExtension" value="php"/>
+      <option name="immediateSync" value="true"/>
+      <option name="name" value="Pint"/>
+      <option name="output" value="$FilePath$"/>
+      <option name="outputFilters">
+        <array/>
+      </option>
+      <option name="program" value="$ProjectFileDir$/tools/pint"/>
+      <option name="runOnExternalChanges" value="false"/>
+      <option name="scopeName" value="Project Files"/>
+      <option name="trackOnlyRoot" value="false"/>
+      <option name="workingDir" value="$ProjectFileDir$"/>
+    </TaskOptions>
+  </component>
+</project>
