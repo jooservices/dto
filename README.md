@@ -202,7 +202,7 @@ Workflows (all on self-hosted `runner1`):
 
 Also: Dependabot (Composer + GitHub Actions), CODEOWNERS, labeler config.
 
-**CI secrets (organization level):** `CODECOV_TOKEN`, `SONAR_TOKEN`, and `SONAR_HOST_URL` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. Grant this repository access when onboarding. No release tag is required to test CI; any push or PR to `develop` or `master` runs the pipeline.
+**CI secrets (organization level):** `CODECOV_TOKEN` and `SONAR_TOKEN` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. `SONAR_HOST_URL` is optional and defaults to `https://sonarcloud.io`. Grant this repository access when onboarding. No release tag is required to test CI; any push or PR to `develop` or `master` runs the pipeline.
 
 Quality gates: Pint (`per` preset) · PHPCS full `PSR12` · PHPStan max level, zero ignores · PHPMD · PHP-CS-Fixer (PHPDoc-only).
 

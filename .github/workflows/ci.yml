@@ -318,17 +318,14 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
-      - name: SonarQube Scan
+      - name: Resolve SonarQube host URL
         id: sonar-config
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           set -euo pipefail
-          host_url="${SONAR_HOST_URL%/}"
-          if [ -z "${host_url}" ]; then
-            echo "SONAR_HOST_URL is required"
-            exit 1
-          fi
+          host_url="${SONAR_HOST_URL:-https://sonarcloud.io}"
+          host_url="${host_url%/}"
           case "${host_url}" in
             http://*|https://*) ;;
             *) host_url="https://${host_url}" ;;
