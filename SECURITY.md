@@ -50,7 +50,7 @@ Automated scanning runs on every change and on schedule:
 - Composer audit and OSV Scanner (dependency vulnerabilities)
 - Gitleaks (secrets)
 - Semgrep OSS (PHP SAST)
-- CodeQL (PHP analysis)
+- CodeQL (GitHub Actions workflow analysis)
 - Dependency Review (on pull requests)
 - Trivy filesystem and container image scans (on release tags)
 - OpenSSF Scorecard and zizmor (workflow supply-chain audit)
