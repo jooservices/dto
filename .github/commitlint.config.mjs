@@ -25,10 +25,6 @@ export default {
         'type-empty': [2, 'never'],
         'subject-empty': [2, 'never'],
         'type-case': [2, 'always', 'lower-case'],
-        'header-pattern': [
-            2,
-            'always',
-            /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9\-./]+\))?(!)?: [A-Z].+$/,
-        ],
+        'subject-case': [2, 'always', ['sentence-case']],
     },
 };
