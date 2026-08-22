@@ -28,6 +28,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Size label
         uses: pascalgn/size-label-action@v0.5.4
