@@ -117,17 +117,3 @@ jobs:
             --repo "${GITHUB_REPOSITORY}" \
             --generate-notes \
             sbom.spdx.json
-
-      - name: Notify Packagist
-        env:
-          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
-          PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
-        run: |
-          if [ -z "$PACKAGIST_USERNAME" ] || [ -z "$PACKAGIST_TOKEN" ]; then
-            echo "Packagist secrets missing"
-            exit 1
-          fi
-          curl -X POST "https://packagist.org/api/update-package" \
-            -H "Content-Type: application/json" \
-            -u "${PACKAGIST_USERNAME}:${PACKAGIST_TOKEN}" \
-            -d '{"repository":{"url":"https://github.com/jooservices/dto"}}'
