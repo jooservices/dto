@@ -17,8 +17,6 @@ concurrency:
 permissions:
   contents: read
   pull-requests: read
-  security-events: write
-  id-token: write
   actions: read
 
 jobs:
@@ -29,6 +27,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -36,6 +35,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -81,6 +82,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -88,6 +90,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -127,6 +131,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -134,6 +139,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -176,6 +183,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -185,6 +193,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -227,6 +236,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -236,6 +246,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -256,6 +267,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -263,11 +275,15 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Semgrep (OSS)
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: p/php
+        run: |
+          docker run --rm \
+            --volume "${GITHUB_WORKSPACE}:/src:ro" \
+            semgrep/semgrep@sha256:67319956da3dcb58baf5b322899c15458e3963e7018a86aeeb5cd224e69cb77a \
+            semgrep scan --config p/php --error
 
   coverage:
     name: Coverage upload
@@ -277,6 +293,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -286,6 +303,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -337,7 +355,7 @@ jobs:
           echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload SonarQube analysis
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}

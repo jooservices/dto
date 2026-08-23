@@ -92,7 +92,7 @@ Also:
 
 - target `develop`
 - keep the diff focused — no debug code, warnings, notices, or drive-by file churn
-- make sure every required CI check is green (validate → lint → test → security → coverage upload)
+- make sure every required CI check is green (validate → lint/test matrices and parallel security jobs → coverage upload)
 
 ## Reporting issues
 

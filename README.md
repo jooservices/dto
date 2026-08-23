@@ -17,7 +17,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 | | |
 | --- | --- |
-| Status | **Not released yet** — no tag / Packagist / GitHub Release until the maintainer announces it |
+| Status | **`v3.0.0` — first public release** |
 | First public line | `v3.0.0` (the archived `v1.x` / `v2.x` implementation is a separate codebase lineage, not an ancestor of this one) |
 | Git history | Fresh repository — clean rewrite, old repo untouched in archive |
 | Compatibility | **None with older versions.** Class layout, behavior contracts, exception hierarchy, and engine internals all changed |
@@ -92,9 +92,6 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 - Docker (recommended — all local tooling runs in `php:8.5-cli-bookworm`)
 
 ## Installation
-
-> [!NOTE]
-> **Not published yet.** The command below becomes valid once the maintainer tags `v3.0.0` and pushes to Packagist.
 
 ```bash
 composer require jooservices/dto:^3.0
@@ -178,22 +175,24 @@ IDE setup: Cursor / VS Code — install recommended workspace extensions; format
 - Feature/fix branches from `develop`, PR back into `develop`; releases via `release/<version>` → `master`; hotfixes from `master`; tags from `master`
 - PRs required, all CI checks green before merge
 
-Required CI chain (dedicated workflows on self-hosted runner `runner1`, PHP jobs in Docker):
+Required CI flow (dedicated workflows on self-hosted Linux X64 runners, PHP jobs in Docker):
 
 ```text
-validate → lint → test (+85% per-suite coverage floor) → security → coverage upload (Codecov + Sonar)
+validate → lint matrix → test matrix ┐
+         dependency security          ├→ coverage gate (85%) → Codecov + Sonar
+         secret scan                  │
+         SAST                         ┘
 ```
 
-Workflows (all on self-hosted `runner1`):
+Workflows run on self-hosted Linux X64 runners:
 
 | Workflow | Purpose |
 | --- | --- |
-| `ci.yml` | validate → lint → test (+85% floor) → security → Codecov + Sonar |
+| `ci.yml` | validate → lint/test matrices + parallel security jobs → 85% coverage → Codecov + Sonar |
 | `commitlint.yml` | Conventional Commits on every PR commit |
 | `codeql.yml` | CodeQL analysis for GitHub Actions workflows |
 | `workflow-audit.yml` | actionlint + zizmor on workflow files |
-| `release.yml` | tag gates, Trivy, SBOM, GitHub Release, Packagist |
-| `release-drafter.yml` | draft release notes from merged PRs |
+| `release.yml` | tag gates, Trivy, SBOM, GitHub Release |
 | `semantic-pr.yml` | Conventional Commits PR title |
 | `pr-labeler.yml` / `pr-size-labeler.yml` | path and size labels |
 | `scorecard.yml` | OpenSSF Scorecard |

@@ -1,8 +1,9 @@
 # GitHub Actions workflow flow
 
 This document describes the workflows currently defined in
-`.github/workflows/`. All jobs run on the self-hosted `runner1` Linux X64
-runner. PHP-related commands run through the repository Docker Compose setup.
+`.github/workflows/`. All jobs run on self-hosted Linux X64 runners in the
+repository runner pool. PHP-related commands run through the repository Docker
+Compose setup.
 
 ## Overall event flow
 
@@ -121,12 +122,10 @@ flowchart TD
     Trivy --> SARIF[Upload filesystem SARIF]
     SARIF --> SBOM[Generate SPDX JSON SBOM]
     SBOM --> GHRelease[Create GitHub Release with generated notes and SBOM]
-    GHRelease --> Packagist[Notify Packagist]
 ```
 
-The workflow fails if the tag is not on `origin/master`, or if Packagist
-credentials are unavailable. It is therefore the publication path; do not tag
-until the owner approves the `v3.0.0` release.
+The workflow fails if the tag is not on `origin/master`. It is therefore the
+publication path — the tag itself is the release trigger.
 
 ## Other workflows
 

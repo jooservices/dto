@@ -23,6 +23,7 @@ jobs:
     steps:
       - name: Repair workspace permissions
         run: |
+          git config --global core.hooksPath /dev/null 2>/dev/null || true
           if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
             docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
               2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
@@ -32,6 +33,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Prepare self-hosted Docker
         uses: ./.github/actions/self-hosted-prepare
@@ -64,6 +66,12 @@ jobs:
 
       - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          # mirror.gcr.io (Trivy's default DB source) resolves to an
+          # IPv6-only address that runner1 cannot route to. Pull the DB
+          # straight from GHCR instead.
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db:1
         with:
           scan-type: fs
           scan-ref: .
@@ -73,6 +81,9 @@ jobs:
 
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db:1
         with:
           scan-type: image
           image-ref: jooservices/dto:php85
@@ -93,6 +104,11 @@ jobs:
           format: spdx-json
           output-file: sbom.spdx.json
 
+      - name: Install GitHub CLI
+        run: |
+          curl -sSL https://github.com/cli/cli/releases/download/v2.63.2/gh_2.63.2_linux_amd64.tar.gz | tar xz -C /tmp
+          sudo mv /tmp/gh_2.63.2_linux_amd64/bin/gh /usr/local/bin/gh
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,17 +117,3 @@ jobs:
             --repo "${GITHUB_REPOSITORY}" \
             --generate-notes \
             sbom.spdx.json
-
-      - name: Notify Packagist
-        env:
-          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
-          PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
-        run: |
-          if [ -z "$PACKAGIST_USERNAME" ] || [ -z "$PACKAGIST_TOKEN" ]; then
-            echo "Packagist secrets missing"
-            exit 1
-          fi
-          curl -X POST "https://packagist.org/api/update-package" \
-            -H "Content-Type: application/json" \
-            -u "${PACKAGIST_USERNAME}:${PACKAGIST_TOKEN}" \
-            -d '{"repository":{"url":"https://github.com/jooservices/dto"}}'
