@@ -20,7 +20,13 @@ make install   # composer install inside the container
 make shell     # interactive container shell
 ```
 
-CaptainHook git hooks are installed automatically via the Composer `post-install-cmd` / `post-update-cmd` scripts. **Never bypass hooks with `--no-verify`.**
+CaptainHook git hooks are installed automatically via the Composer `post-install-cmd` / `post-update-cmd` scripts. On machines without host PHP, re-point hooks to Docker after install:
+
+```bash
+tools/install-git-hooks
+```
+
+**Never bypass hooks with `--no-verify`.**
 
 ## Git workflow
 
@@ -86,7 +92,7 @@ Also:
 
 - target `develop`
 - keep the diff focused — no debug code, warnings, notices, or drive-by file churn
-- make sure every required CI check is green (validate → lint → test → security → coverage upload)
+- make sure every required CI check is green (validate → lint/test matrices and parallel security jobs → coverage upload)
 
 ## Reporting issues
 
