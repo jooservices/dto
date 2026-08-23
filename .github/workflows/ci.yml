@@ -52,6 +52,7 @@ jobs:
   lint:
     name: Lint (${{ matrix.name }})
     needs: [validate]
+    if: github.event_name == 'pull_request'
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     strategy:
@@ -95,7 +96,7 @@ jobs:
 
   test:
     name: Test (${{ matrix.name }})
-    needs: [lint]
+    needs: [validate]
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     strategy:
@@ -145,6 +146,7 @@ jobs:
   dependency-security:
     name: Dependency security
     needs: [validate]
+    if: github.event_name == 'pull_request'
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     steps:
@@ -187,6 +189,7 @@ jobs:
   secret-scan:
     name: Secret scan
     needs: [validate]
+    if: github.event_name == 'pull_request'
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
@@ -207,6 +210,7 @@ jobs:
   sast:
     name: SAST
     needs: [validate]
+    if: github.event_name == 'pull_request'
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
@@ -225,6 +229,7 @@ jobs:
   coverage:
     name: Coverage upload
     needs: [test, dependency-security, secret-scan, sast]
+    if: ${{ !cancelled() && !failure() }}
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
     steps:
