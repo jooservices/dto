@@ -25,14 +25,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -77,14 +69,6 @@ jobs:
           - name: PHP-CS-Fixer
             command: composer lint:cs
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -123,14 +107,6 @@ jobs:
           - name: Integration
             suite: Integration
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -172,14 +148,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 30
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -222,14 +190,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -250,14 +210,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 15
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -276,14 +228,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
     steps:
-      - name: Repair workspace permissions
-        run: |
-          git config --global core.hooksPath /dev/null 2>/dev/null || true
-          if [ -d "${GITHUB_WORKSPACE}/vendor" ] || [ -d "${GITHUB_WORKSPACE}/build" ]; then
-            docker run --rm -v "${GITHUB_WORKSPACE}:/w" alpine chown -R "$(id -u):$(id -g)" /w \
-              2>/dev/null || sudo chown -R "$(id -u):$(id -g)" "${GITHUB_WORKSPACE}" 2>/dev/null || true
-          fi
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
