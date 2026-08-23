@@ -66,6 +66,12 @@ jobs:
 
       - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          # mirror.gcr.io (Trivy's default DB source) resolves to an
+          # IPv6-only address that runner1 cannot route to. Pull the DB
+          # straight from GHCR instead.
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db:1
         with:
           scan-type: fs
           scan-ref: .
@@ -75,6 +81,9 @@ jobs:
 
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db:1
         with:
           scan-type: image
           image-ref: jooservices/dto:php85
