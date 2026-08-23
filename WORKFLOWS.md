@@ -13,19 +13,13 @@ flowchart TD
 
     push[Push to master or develop] --> CI[CI]
     push --> CodeQL[CodeQL]
-    push --> Drafter[Release Drafter]
     push --> Audit{Changed files under .github?}
     Audit -->|yes| WorkflowAudit[Workflow audit]
 
     pr[PR opened / edited / synchronized / reopened] --> CI
     pr --> CodeQL
-    pr --> Commitlint[Commitlint]
-    pr --> Semantic[Semantic PR Title]
-    pr --> PathLabel[PR Labeler]
-    pr --> SizeLabel[PR size labeler]
+    pr --> Housekeeping[PR housekeeping]
     pr --> Audit
-
-    first[First issue or PR] --> Welcome[First interaction]
 
     tag[Push tag v*.*.*] --> Release[Release]
 
@@ -48,14 +42,14 @@ flowchart TD
 flowchart TD
     PR[PR activity] --> CI[CI quality gate]
     PR --> Native[GitHub Secret Scanning]
-    PR --> CL[Validate commit messages]
-    PR --> SPT[Validate PR title]
-    PR --> PL[Apply path labels]
-    PR --> PSL[Apply size label]
+    PR --> HK[PR housekeeping]
     PR --> CQL[Analyze GitHub Actions with CodeQL]
     PR --> WA{Workflow files changed?}
-    WA -->|yes| AL[Actionlint]
     WA -->|yes| ZM[Zizmor]
+
+    HK --> SPT[Validate PR title<br>skipped for Dependabot]
+    HK --> CL[Validate commit messages]
+    HK --> PL[Apply path labels]
 
     CI --> V[Validate]
     V --> L[Lint matrix]
@@ -69,7 +63,7 @@ flowchart TD
     SA --> CU
 ```
 
-The CI and PR-policy workflows are independent: a label or title check does
+The CI and PR-policy workflows are independent: the housekeeping checks do
 not wait for CI, and CI does not wait for those checks.
 
 ## CI (`ci.yml`)
@@ -132,12 +126,7 @@ publication path — the tag itself is the release trigger.
 | Workflow | Trigger | Flow / result |
 | --- | --- | --- |
 | `codeql.yml` | Push/PR on `master` or `develop`; Monday 06:00 UTC | Checkout → initialize CodeQL for GitHub Actions only → analyze and publish security results. |
-| `commitlint.yml` | PR opened, edited, synchronized, reopened | Checkout full history → validate every PR commit against `.github/commitlint.config.mjs`. |
-| `semantic-pr.yml` | PR opened, edited, synchronized | Validate PR title type and require an uppercase first subject character. |
-| `pr-labeler.yml` | PR opened, synchronized, reopened | Checkout → apply labels from `.github/labeler.yml` based on changed paths. |
-| `pr-size-labeler.yml` | PR opened, synchronized, reopened | Checkout → apply `size/XS` through `size/XXL` based on changed-line thresholds. |
-| `first-interaction.yml` | First issue or PR opened | Post contributor welcome message and contribution/security guidance. |
-| `release-drafter.yml` | Push to `develop` or `master` | Checkout → update draft release notes using `.github/release-drafter.yml`. |
+| `pr-housekeeping.yml` | PR opened, edited, synchronized, reopened | One self-hosted job: validate the PR title against Conventional Commits (skipped for Dependabot), validate every PR commit against `.github/commitlint.config.mjs`, then apply path labels from `.github/labeler.yml`. |
 | `link-check.yml` | Monday 04:00 UTC; manual | Checkout → Lychee checks Markdown links, excluding `vendor`, Packagist, Codecov, and mail links. |
 | `scorecard.yml` | Push to `master`; Monday 00:00 UTC; manual | Checkout full history → OpenSSF Scorecard → upload SARIF. |
 | `stale.yml` | Daily 01:00 UTC; manual | Mark issues/PRs stale after 60 inactive days; close 14 days later, except pinned/security/dependencies. |

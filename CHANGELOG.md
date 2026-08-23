@@ -9,6 +9,14 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+### Changed
+
+- CI: consolidated `commitlint`, `semantic-pr`, and `pr-labeler` workflows into a single `pr-housekeeping` workflow; Dependabot pull requests are exempt from PR-title validation
+
+### Removed
+
+- CI: dropped the `pr-size-labeler` and `first-interaction` workflows
+
 ## [3.0.0] - 2026-08-22
 
 ### Added
