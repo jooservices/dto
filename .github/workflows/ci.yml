@@ -241,6 +241,7 @@ jobs:
           ls -la build/coverage
 
       - name: Upload to Codecov
+        if: github.event.pull_request.user.type != 'Bot'
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -249,6 +250,7 @@ jobs:
           verbose: true
 
       - name: Resolve SonarQube host URL
+        if: github.event.pull_request.user.type != 'Bot'
         id: sonar-config
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -267,6 +269,7 @@ jobs:
           echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload SonarQube analysis
+        if: github.event.pull_request.user.type != 'Bot'
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

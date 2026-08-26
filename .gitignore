@@ -12,5 +12,7 @@ composer.phar
 .env.*
 !.env.example
 /node_modules/
+.idea/*
 !.idea/inspectionProfiles/
+!.idea/inspectionProfiles/*
 !.idea/watcherTasks.xml
