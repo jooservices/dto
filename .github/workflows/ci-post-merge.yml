@@ -29,7 +29,7 @@ jobs:
         run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: vendor-cache
         with:
           path: vendor
@@ -67,7 +67,7 @@ jobs:
         run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: vendor-cache
         with:
           path: vendor
@@ -152,7 +152,7 @@ jobs:
           echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload SonarQube analysis
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}
