@@ -92,7 +92,7 @@ Quality of life:
 ### Changed
 
 - PHP requirement stays `>= 8.5`; extensions `dom` + `libxml` required
-- Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 2.0) formatting: Pint `per` preset primary, PHPCS full `PSR12`, PHPStan max level with zero ignores, PHPMD, PHP-CS-Fixer restricted to PHPDoc rules
+- Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 3.0) formatting: Pint `per` preset primary, PHPCS full `PSR12`, PHPStan max level with zero ignores, PHPMD, PHP-CS-Fixer restricted to PHPDoc rules
 - Union type casting uses deterministic order: exact type first, then specificity (`int` before `float` in `int|float`), declaration order last
 - `#[RequiredIf]` compares values after casting, not raw pre-cast input
 - Lazy properties are computed only when serialization actually requests them

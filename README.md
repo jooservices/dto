@@ -35,7 +35,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 | Hashing | Order-dependent `serialize(toArray())` | Canonical sorted-key JSON over the state view |
 | Framework coupling | Laravel `config()` inside `#[DefaultFrom]` | Pluggable resolver (env + static method); Laravel adapters fully dropped |
 | HTTP input | — | `fromRequest(ServerRequestInterface)` (PSR-7) |
-| Coding standards | Pint `laravel` preset, partial PSR-12 | Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 2.0), Pint `per` preset |
+| Coding standards | Pint `laravel` preset, partial PSR-12 | Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 3.0), Pint `per` preset |
 | Correctness & security | Known defect register (C1–C19, S1–S6) | All fixed with named regression tests |
 
 ## Features
