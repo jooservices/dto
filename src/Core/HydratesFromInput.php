@@ -12,6 +12,7 @@ use JOOservices\Dto\Exceptions\HydrationException;
 use JOOservices\Dto\Exceptions\MappingException;
 use JOOservices\Dto\Exceptions\ValidationException;
 use JsonException;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
 
 /**
@@ -132,7 +133,7 @@ abstract class HydratesFromInput
     }
 
     /**
-     * PSR-7 duck-typed: parsed body merged over query params.
+     * PSR-7: parsed body merged over query params.
      *
      * @throws CastException
      * @throws HydrationException
@@ -142,31 +143,18 @@ abstract class HydratesFromInput
      * @throws ReflectionException
      * @throws ValidationException
      */
-    public static function fromRequest(object $request, ?Context $ctx = null): static
+    public static function fromRequest(ServerRequestInterface $request, ?Context $ctx = null): static
     {
-        if (! method_exists($request, 'getParsedBody') || ! method_exists($request, 'getQueryParams')) {
-            throw new HydrationException(
-                message: 'fromRequest() expects a PSR-7 server request (getParsedBody/getQueryParams).',
-                givenType: $request::class,
-            );
-        }
-
         $body = $request->getParsedBody();
-        $query = $request->getQueryParams();
         /** @var array<string, mixed> $merged */
-        $merged = [];
-        if (is_array($query)) {
-            /** @var array<string, mixed> $query */
-            $merged = $query;
-        }
+        $merged = $request->getQueryParams();
 
         if (is_array($body)) {
             /** @var array<string, mixed> $body */
             $merged = array_merge($merged, $body);
-        } elseif (is_string($body) || is_object($body)) {
-            $json = is_string($body) ? $body : json_encode($body, JSON_THROW_ON_ERROR);
+        } elseif (is_object($body)) {
             $decoded = json_decode(
-                $json,
+                json_encode($body, JSON_THROW_ON_ERROR),
                 true,
                 32,
                 JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING,
