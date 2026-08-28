@@ -9,6 +9,8 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-08-28
+
 ### Fixed
 
 - Nested DTO `equals()` / `hash()` compare canonical value state, including `#[Hidden]` and `#[Redact]` secrets, instead of object identity or `jsonSerialize()` output
@@ -118,5 +120,6 @@ Security:
 - File metadata cache: lock files, verify freshness envelope **before** deserialization, strict class allowlist, no error suppression
 - Explicit JSON decode depth and flags with documented limits
 
-[Unreleased]: https://github.com/jooservices/dto/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/jooservices/dto/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/jooservices/dto/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/jooservices/dto/releases/tag/v3.0.0
