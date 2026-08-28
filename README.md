@@ -90,7 +90,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 - PHP `>= 8.5`
 - Extensions: `dom`, `libxml`
-- Optional: `psr/log` (Engine debug logging), `psr/http-message` (`fromRequest()`)
+- `psr/http-message` (`fromRequest()`), optional: `psr/log` (Engine debug logging)
 - Docker (recommended — all local tooling runs in `php:8.5-cli-bookworm`)
 
 ## Installation

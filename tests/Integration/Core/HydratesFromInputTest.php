@@ -11,6 +11,7 @@ use JOOservices\Dto\Exceptions\MappingException;
 use JOOservices\Dto\Exceptions\ValidationException;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureStringDto;
 use JOOservices\Dto\Tests\Fixtures\CoreFixtureTransformInputDto;
+use JOOservices\Dto\Tests\Fixtures\FakeServerRequest;
 use JOOservices\Dto\Tests\Fixtures\UserDto;
 use JOOservices\Dto\Tests\TestCase;
 use JsonException;
@@ -30,19 +31,10 @@ final class HydratesFromInputTest extends TestCase
      */
     public function testFromRequestMergesQueryAndArrayBody(): void
     {
-        $request = new class {
-            /** @return array<string, mixed> */
-            public function getParsedBody(): array
-            {
-                return ['name' => 'from-body'];
-            }
-
-            /** @return array<string, mixed> */
-            public function getQueryParams(): array
-            {
-                return ['age' => '30'];
-            }
-        };
+        $request = new FakeServerRequest(
+            parsedBody: ['name' => 'from-body'],
+            queryParams: ['age' => '30'],
+        );
 
         $dto = UserDto::fromRequest($request);
 
@@ -64,22 +56,10 @@ final class HydratesFromInputTest extends TestCase
         $body = new stdClass();
         $body->name = 'from-object-body';
 
-        $request = new class ($body) {
-            public function __construct(private readonly stdClass $body)
-            {
-            }
-
-            public function getParsedBody(): stdClass
-            {
-                return $this->body;
-            }
-
-            /** @return array<string, mixed> */
-            public function getQueryParams(): array
-            {
-                return ['age' => '21'];
-            }
-        };
+        $request = new FakeServerRequest(
+            parsedBody: $body,
+            queryParams: ['age' => '21'],
+        );
 
         $dto = UserDto::fromRequest($request);
 
@@ -96,65 +76,12 @@ final class HydratesFromInputTest extends TestCase
      * @throws ReflectionException
      * @throws ValidationException
      */
-    public function testFromRequestRejectsNonPsr7Request(): void
-    {
-        $this->expectException(HydrationException::class);
-        UserDto::fromRequest(new stdClass());
-    }
-
-    /**
-     * @throws CastException
-     * @throws HydrationException
-     * @throws InvalidArgumentException
-     * @throws JsonException
-     * @throws MappingException
-     * @throws ReflectionException
-     * @throws ValidationException
-     */
-    public function testFromRequestDecodesJsonStringParsedBody(): void
-    {
-        $request = new class {
-            public function getParsedBody(): string
-            {
-                return '{"name":"from-json-body"}';
-            }
-
-            /** @return array<string, mixed> */
-            public function getQueryParams(): array
-            {
-                return ['age' => '30'];
-            }
-        };
-
-        $dto = UserDto::fromRequest($request);
-
-        self::assertSame('from-json-body', $dto->name);
-        self::assertSame(30, $dto->age);
-    }
-
-    /**
-     * @throws CastException
-     * @throws HydrationException
-     * @throws InvalidArgumentException
-     * @throws JsonException
-     * @throws MappingException
-     * @throws ReflectionException
-     * @throws ValidationException
-     */
     public function testFromRequestNullBodyKeepsQueryOnly(): void
     {
-        $request = new class {
-            public function getParsedBody(): mixed
-            {
-                return null;
-            }
-
-            /** @return array<string, mixed> */
-            public function getQueryParams(): array
-            {
-                return ['name' => 'from-query', 'age' => '18'];
-            }
-        };
+        $request = new FakeServerRequest(
+            parsedBody: null,
+            queryParams: ['name' => 'from-query', 'age' => '18'],
+        );
 
         $dto = UserDto::fromRequest($request);
 

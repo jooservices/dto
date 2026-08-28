@@ -25,11 +25,11 @@
     "require": {
         "php": ">=8.5",
         "ext-dom": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "psr/http-message": "^2.0"
     },
     "suggest": {
-        "psr/log": "Enables debug logging during DTO hydration via Engine constructor injection.",
-        "psr/http-message": "Enables Dto::fromRequest(ServerRequestInterface) for PSR-7 request hydration."
+        "psr/log": "Enables debug logging during DTO hydration via Engine constructor injection."
     },
     "require-dev": {
         "captainhook/captainhook": "^5.23",

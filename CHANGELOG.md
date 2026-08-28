@@ -9,6 +9,11 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+### Changed
+
+- `fromRequest()` now type-hints `Psr\Http\Message\ServerRequestInterface` (PSR-7) instead of duck-typed `object`; `psr/http-message` moved from `suggest` to `require`
+- `fromRequest()` no longer accepts a JSON-string parsed body — PSR-7 `getParsedBody()` contract is `null|array|object` only
+
 ## [3.1.0] - 2026-08-28
 
 ### Fixed
