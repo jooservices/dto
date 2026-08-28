@@ -37,7 +37,7 @@ final class ValueTypeCaster
             return $this->castUnion($type, $property, $value, $ctx);
         }
 
-        if ($type->kind === TypeDescriptor::KIND_ARRAY) {
+        if ($this->isArrayType($type)) {
             return $this->castArray($type, $property, $value, $ctx);
         }
 
@@ -54,6 +54,10 @@ final class ValueTypeCaster
 
     public function isExactMatch(TypeDescriptor $member, mixed $value): bool
     {
+        if ($this->isArrayType($member)) {
+            return is_array($value);
+        }
+
         if ($member->kind === TypeDescriptor::KIND_BUILTIN) {
             return match ($member->builtin) {
                 'int' => is_int($value),
@@ -184,7 +188,7 @@ final class ValueTypeCaster
         }
 
         $itemType = $type->members[0] ?? null;
-        if ($itemType === null) {
+        if ($itemType === null || $itemType->kind === TypeDescriptor::KIND_MIXED) {
             return $value;
         }
 
@@ -272,5 +276,15 @@ final class ValueTypeCaster
         }
 
         return $caster->cast($type, $property, $value, $ctx);
+    }
+
+    /**
+     * Reflection describes a native `array` hint as KIND_BUILTIN. `@var` item
+     * types upgrade the property to KIND_ARRAY. Union members stay builtin.
+     */
+    private function isArrayType(TypeDescriptor $type): bool
+    {
+        return $type->kind === TypeDescriptor::KIND_ARRAY
+            || ($type->kind === TypeDescriptor::KIND_BUILTIN && $type->builtin === 'array');
     }
 }

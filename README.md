@@ -5,10 +5,10 @@
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jooservices_dto&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jooservices_dto)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
-[![Release](https://img.shields.io/badge/version-3.1.0-blue.svg)](CHANGELOG.md)
+[![Release](https://img.shields.io/badge/version-3.2.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `Data` objects, constructor-first hydration, opt-in validation, serialization control, collections, and JSON Schema / OpenAPI generation. Zero runtime dependencies.
+A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `Data` objects, constructor-first hydration, opt-in validation, serialization control, collections, and JSON Schema / OpenAPI generation. One runtime dependency: `psr/http-message` (interface-only).
 
 > [!WARNING]
 > **`v3.0.0` is a complete ground-up rebuild of this package and is NOT backward compatible with any previous version (`v1.x`, `v2.x`).**
@@ -19,23 +19,23 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 | | |
 | --- | --- |
-| Status | **`v3.1.0` — current release** |
+| Status | **`v3.2.0` — current release** |
 | First public line | `v3.0.0` (the archived `v1.x` / `v2.x` implementation is a separate codebase lineage, not an ancestor of this one) |
 | Git history | Fresh repository — clean rewrite, old repo untouched in archive |
 | Compatibility | **None with older versions.** Class layout, behavior contracts, exception hierarchy, and engine internals all changed |
-| Runtime dependencies | Zero `require` beyond PHP itself — exceptions are vendorized; PSR-3 / PSR-7 integrations are optional via Composer `suggest` |
+| Runtime dependencies | `psr/http-message` (interface-only) for `fromRequest()`; exceptions are vendorized; PSR-3 logging is optional via Composer `suggest` |
 
 ## Highlights vs the previous line
 
 | Area | Previous (`v2.x`) | This rebuild (`v3.0.0`) |
 | --- | --- | --- |
-| Dependencies | `jooservices/exceptions ^1.0` runtime require | Zero runtime deps, vendorized exceptions |
+| Dependencies | `jooservices/exceptions ^1.0` runtime require | Vendorized exceptions; `psr/http-message` for `fromRequest()` |
 | Engine | Per-class static engine store | One process-wide Engine + LRU `ClassMeta` caches + worker `reset()` |
 | `with()` / `clone()` / `merge()` | `toArray()` → `from()` round-trip (dropped `#[Hidden]`, mixed key spaces) | State view through the constructor, property-name keys only, patched values cast, named args supported |
 | Hashing | Order-dependent `serialize(toArray())` | Canonical sorted-key JSON over the state view |
 | Framework coupling | Laravel `config()` inside `#[DefaultFrom]` | Pluggable resolver (env + static method); Laravel adapters fully dropped |
 | HTTP input | — | `fromRequest(ServerRequestInterface)` (PSR-7) |
-| Coding standards | Pint `laravel` preset, partial PSR-12 | Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 2.0), Pint `per` preset |
+| Coding standards | Pint `laravel` preset, partial PSR-12 | Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 3.0), Pint `per` preset |
 | Correctness & security | Known defect register (C1–C19, S1–S6) | All fixed with named regression tests |
 
 ## Features
@@ -71,14 +71,14 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 - Arrays, JSON strings, simple objects, PSR-7 requests
 - Input naming strategies (camelCase / snake_case); output-side naming opt-in via Context
 - Global + property pipelines with options; input normalizers
-- Scalar, enum, `DateTimeInterface`, nested DTO, PHPDoc typed arrays (`Type[]`, `array<Type>`, `list<Type>`), native union types in stable documented order
+- Scalar, enum, `DateTimeInterface`, nested DTO, untyped `array` pass-through, PHPDoc typed arrays (`Type[]`, `array<Type>`, `array<K, V>`, `list<Type>` on `@var` or constructor `@param`), native union types in stable documented order
 
 **Validation, normalization, collections**
 
 - Opt-in validation via Context plus standalone instance validation; rule registry extensible via attributes
 - `toArray()` / `toJson()` / `jsonSerialize()`, transformers, lazy properties
 - Serialization filters: `only` / `except` / `maxDepth` / `wrap` / `includeLazy`
-- `DataCollection` and `PaginatedCollection` (duck-typed paginator support)
+- `DataCollection` (`toArray()` / `jsonSerialize()` / `all()`) and `PaginatedCollection` (duck-typed paginator support)
 
 **Schema, meta, exceptions**
 
@@ -90,7 +90,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 - PHP `>= 8.5`
 - Extensions: `dom`, `libxml`
-- Optional: `psr/log` (Engine debug logging), `psr/http-message` (`fromRequest()`)
+- `psr/http-message` (`fromRequest()`), optional: `psr/log` (Engine debug logging)
 - Docker (recommended — all local tooling runs in `php:8.5-cli-bookworm`)
 
 ## Installation

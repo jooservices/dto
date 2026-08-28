@@ -122,6 +122,24 @@ final class DataCollectionTest extends TestCase
      * @throws ReflectionException
      * @throws ValidationException
      */
+    public function testToArrayMatchesJsonSerialize(): void
+    {
+        $collection = new DataCollection(UserDto::class, [
+            ['name' => 'Ada', 'age' => 30],
+        ]);
+
+        self::assertSame($collection->jsonSerialize(), $collection->toArray());
+        self::assertSame([['name' => 'Ada', 'age' => 30, 'email' => null]], $collection->toArray());
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
     public function testWrapWrapsSerializationUnderTheGivenKey(): void
     {
         $collection = new DataCollection(UserDto::class, [

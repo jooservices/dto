@@ -9,6 +9,25 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-08-28
+
+### Added
+
+- Constructor `@param` array item types (`list<T>`, `array<K, V>`, `T[]`) are read when the promoted property has no `@var`; `@var` still wins if both are present
+- `DataCollection::toArray()` returns the same array as `jsonSerialize()` (including `wrap()`)
+
+### Fixed
+
+- Native `array` properties hydrate as a pass-through instead of throwing `CastException: No caster matched the value`
+- PHPDoc `@var array<K, V>` and `@var array<string, mixed>` now take the value type (the previous regex kept the first token, so `string,` / dropped `mixed`)
+
+### Changed
+
+- Builtin `array` properties are described as `KIND_ARRAY` even without a `@var` item type, so casting and JSON Schema share one path
+- `array|string` unions treat an array value as an exact match
+- `fromRequest()` now type-hints `Psr\Http\Message\ServerRequestInterface` (PSR-7) instead of duck-typed `object`; `psr/http-message` moved from `suggest` to `require`
+- `fromRequest()` no longer accepts a JSON-string parsed body — PSR-7 `getParsedBody()` contract is `null|array|object` only
+
 ## [3.1.0] - 2026-08-28
 
 ### Fixed
@@ -75,7 +94,7 @@ Quality of life:
 ### Changed
 
 - PHP requirement stays `>= 8.5`; extensions `dom` + `libxml` required
-- Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 2.0) formatting: Pint `per` preset primary, PHPCS full `PSR12`, PHPStan max level with zero ignores, PHPMD, PHP-CS-Fixer restricted to PHPDoc rules
+- Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 3.0) formatting: Pint `per` preset primary, PHPCS full `PSR12`, PHPStan max level with zero ignores, PHPMD, PHP-CS-Fixer restricted to PHPDoc rules
 - Union type casting uses deterministic order: exact type first, then specificity (`int` before `float` in `int|float`), declaration order last
 - `#[RequiredIf]` compares values after casting, not raw pre-cast input
 - Lazy properties are computed only when serialization actually requests them
@@ -120,6 +139,7 @@ Security:
 - File metadata cache: lock files, verify freshness envelope **before** deserialization, strict class allowlist, no error suppression
 - Explicit JSON decode depth and flags with documented limits
 
-[Unreleased]: https://github.com/jooservices/dto/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/jooservices/dto/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/jooservices/dto/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/jooservices/dto/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/jooservices/dto/releases/tag/v3.0.0
