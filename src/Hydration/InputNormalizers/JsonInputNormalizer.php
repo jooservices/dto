@@ -38,7 +38,12 @@ final class JsonInputNormalizer implements InputNormalizerInterface
         }
 
         try {
-            $decoded = json_decode($source, true, self::DECODE_DEPTH, JSON_THROW_ON_ERROR);
+            $decoded = json_decode(
+                $source,
+                true,
+                self::DECODE_DEPTH,
+                JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING,
+            );
         } catch (JsonException $exception) {
             throw new HydrationException(
                 message: 'Invalid JSON input.',

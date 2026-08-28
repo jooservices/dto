@@ -25,6 +25,16 @@ final class DtoFingerprint
             $state[$property->getName()] = $property->getValue($instance);
         }
 
+        return $this->hashState($state);
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     *
+     * @throws JsonException
+     */
+    public function hashState(array $state): string
+    {
         /** @var array<string, mixed> $canonical */
         $canonical = $this->canonicalize($state);
         ksort($canonical);

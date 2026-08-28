@@ -45,6 +45,16 @@ final class JsonInputNormalizerTest extends TestCase
     /**
      * @throws HydrationException
      */
+    public function testNormalizeKeepsBigintAsString(): void
+    {
+        $decoded = (new JsonInputNormalizer())->normalize('{"value":9223372036854775808}');
+
+        self::assertSame('9223372036854775808', $decoded['value']);
+    }
+
+    /**
+     * @throws HydrationException
+     */
     public function testNormalizeRejectsInvalidJson(): void
     {
         $this->expectException(HydrationException::class);

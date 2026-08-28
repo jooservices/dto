@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JOOservices\Dto\Core;
 
+use DateTimeInterface;
 use InvalidArgumentException;
 use JOOservices\Dto\Exceptions\CastException;
 use JOOservices\Dto\Exceptions\HydrationException;
@@ -105,14 +106,39 @@ abstract class CopiesViaConstructor extends HydratesFromInput
     /**
      * Property-keyed snapshot including hidden properties. No lazy compute.
      *
+     * Nested DTOs become their state views, DateTimeInterface values become ATOM
+     * strings, and arrays are walked recursively so equals/hash compare by value.
+     *
      * @return array<string, mixed>
      */
     protected function stateView(): array
     {
         /** @var array<string, mixed> $state */
-        $state = get_object_vars($this);
+        $state = $this->canonicalizeStateValue(get_object_vars($this));
 
         return $state;
+    }
+
+    private function canonicalizeStateValue(mixed $value): mixed
+    {
+        if ($value instanceof self) {
+            return $value->stateView();
+        }
+
+        if ($value instanceof DateTimeInterface) {
+            return $value->format(DateTimeInterface::ATOM);
+        }
+
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $canonical = [];
+        foreach ($value as $key => $item) {
+            $canonical[$key] = $this->canonicalizeStateValue($item);
+        }
+
+        return $canonical;
     }
 
     /**

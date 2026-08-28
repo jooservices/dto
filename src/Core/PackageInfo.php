@@ -12,7 +12,7 @@ final class PackageInfo
 {
     public const string NAME = 'jooservices/dto';
 
-    public const string VERSION = '3.0.0-dev';
+    public const string VERSION = '3.0.0';
 
     public static function name(): string
     {

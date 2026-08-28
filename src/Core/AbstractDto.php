@@ -51,7 +51,12 @@ abstract class AbstractDto extends CopiesViaConstructor implements JsonSerializa
      */
     public function toJson(?Context $ctx = null, int $flags = 0): string
     {
-        return static::engine()->normalizeToJson($this, $ctx, $flags);
+        $encoded = json_encode($this->toArray($ctx), $flags | JSON_THROW_ON_ERROR);
+        if ($encoded === false) {
+            throw new JsonException(json_last_error_msg());
+        }
+
+        return $encoded;
     }
 
     /**
@@ -104,7 +109,7 @@ abstract class AbstractDto extends CopiesViaConstructor implements JsonSerializa
      */
     public function hash(): string
     {
-        return (new DtoFingerprint())->hash($this);
+        return (new DtoFingerprint())->hashState($this->stateView());
     }
 
     /**

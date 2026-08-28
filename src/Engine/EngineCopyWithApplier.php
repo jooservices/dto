@@ -19,6 +19,7 @@ final class EngineCopyWithApplier
     public function __construct(
         private readonly MetaFactoryInterface $metaFactory,
         private readonly HydratorInterface $hydrator,
+        private readonly NestedValueCopier $nestedValueCopier = new NestedValueCopier(),
     ) {
     }
 
@@ -37,6 +38,7 @@ final class EngineCopyWithApplier
         $meta = $this->metaFactory->create($instance::class);
         /** @var array<string, mixed> $state */
         $state = get_object_vars($instance);
+        $state = $this->nestedValueCopier->copyUnpatched($state, $patch);
 
         foreach ($patch as $key => $value) {
             $propertyKey = $this->resolvePatchKey($key, $instance, $state, $value);

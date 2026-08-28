@@ -179,6 +179,22 @@ final class IntCasterTest extends TestCase
     }
 
     /**
+     * Leading zeros must not hide an overflow that would otherwise wrap.
+     *
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testRejectsLeadingZeroDigitStringOverflowingIntRange(): void
+    {
+        $this->expectException(CastException::class);
+        CastingFixtureIntDto::fromArray(['value' => '09223372036854775808']);
+    }
+
+    /**
      * @throws CastException
      * @throws HydrationException
      * @throws InvalidArgumentException

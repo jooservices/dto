@@ -13,7 +13,7 @@ use RuntimeException;
  */
 final class FileMetaCache implements MetaCacheInterface
 {
-    private const string ENVELOPE_VERSION = '2';
+    private const string ENVELOPE_VERSION = '3';
 
     private const string ENVELOPE_HMAC_ALGO = 'sha256';
 
@@ -24,6 +24,8 @@ final class FileMetaCache implements MetaCacheInterface
     private readonly MemoryMetaCache $memory;
 
     private readonly MetaCacheAllowedClasses $allowedClasses;
+
+    private readonly FileMetaSourceHash $sourceHash;
 
     /**
      * @throws InvalidArgumentException
@@ -51,6 +53,7 @@ final class FileMetaCache implements MetaCacheInterface
         $this->signingKey = $signingKey;
         $this->memory = new MemoryMetaCache($memoryMaxEntries);
         $this->allowedClasses = $allowedClasses ?? new MetaCacheAllowedClasses();
+        $this->sourceHash = new FileMetaSourceHash();
     }
 
     public function get(string $className): ?ClassMeta
@@ -182,6 +185,7 @@ final class FileMetaCache implements MetaCacheInterface
         return json_encode([
             'v' => self::ENVELOPE_VERSION,
             'class' => $className,
+            'source' => $this->sourceHash->ofClass($className) ?? '',
             'hash' => $hash,
             'payload' => base64_encode($serialized),
         ], JSON_THROW_ON_ERROR);
@@ -195,7 +199,7 @@ final class FileMetaCache implements MetaCacheInterface
         }
 
         $serialized = $this->verifiedSerializedPayload($envelope);
-        if ($serialized === null) {
+        if ($serialized === null || ! $this->sourceHash->matchesEnvelope($envelope, $expectedClass)) {
             return null;
         }
 
@@ -203,12 +207,12 @@ final class FileMetaCache implements MetaCacheInterface
     }
 
     /**
-     * @return array{v?:string,class?:string,hash?:string,payload?:string}|null
+     * @return array{v?:string,class?:string,source?:string,hash?:string,payload?:string}|null
      */
     private function parseEnvelopeJson(string $raw): ?array
     {
         try {
-            /** @var array{v?:string,class?:string,hash?:string,payload?:string} $envelope */
+            /** @var array{v?:string,class?:string,source?:string,hash?:string,payload?:string} $envelope */
             $envelope = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return null;
@@ -222,7 +226,7 @@ final class FileMetaCache implements MetaCacheInterface
     }
 
     /**
-     * @param  array{v?:string,class?:string,hash?:string,payload?:string}  $envelope
+     * @param  array{v?:string,class?:string,source?:string,hash?:string,payload?:string}  $envelope
      */
     private function envelopeMatchesClass(array $envelope, string $expectedClass): bool
     {
@@ -230,7 +234,7 @@ final class FileMetaCache implements MetaCacheInterface
     }
 
     /**
-     * @param  array{v?:string,class?:string,hash?:string,payload?:string}  $envelope
+     * @param  array{v?:string,class?:string,source?:string,hash?:string,payload?:string}  $envelope
      */
     private function verifiedSerializedPayload(array $envelope): ?string
     {
