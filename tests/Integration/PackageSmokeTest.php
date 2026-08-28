@@ -23,7 +23,7 @@ final class PackageSmokeTest extends TestCase
     public function testAutoloadResolvesPackageInfo(): void
     {
         self::assertSame('jooservices/dto', PackageInfo::name());
-        self::assertSame('3.1.0', PackageInfo::version());
+        self::assertSame('3.2.0', PackageInfo::version());
     }
 
     /**

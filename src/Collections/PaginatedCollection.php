@@ -80,7 +80,7 @@ final class PaginatedCollection
     public function toArray(): array
     {
         return [
-            'data' => $this->collection->jsonSerialize(),
+            'data' => $this->collection->toArray(),
             'total' => $this->total,
             'perPage' => $this->perPage,
             'currentPage' => $this->currentPage,

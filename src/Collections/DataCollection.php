@@ -117,6 +117,21 @@ final class DataCollection implements Countable, IteratorAggregate, JsonSerializ
     }
 
     /**
+     * @return array<int|string, mixed>|array<string, mixed>
+     *
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function toArray(): array
+    {
+        /** @var array<int|string, mixed>|array<string, mixed> $rows */
+        $rows = $this->jsonSerialize();
+
+        return $rows;
+    }
+
+    /**
      * @return array<int|string, T>
      */
     public function all(): array

@@ -36,9 +36,12 @@ final class MetaFactoryPropertyReader
             return [];
         }
 
+        $constructorDoc = $constructor->getDocComment();
+        $constructorDoc = $constructorDoc === false ? null : $constructorDoc;
+
         $properties = [];
         foreach ($constructor->getParameters() as $parameter) {
-            $properties[] = $this->readPromotedProperty($reflection, $parameter, $className);
+            $properties[] = $this->readPromotedProperty($reflection, $parameter, $className, $constructorDoc);
         }
 
         return $properties;
@@ -55,12 +58,13 @@ final class MetaFactoryPropertyReader
         ReflectionClass $reflection,
         ReflectionParameter $parameter,
         string $className,
+        ?string $constructorDoc,
     ): PropertyMeta {
         $name = $parameter->getName();
         $this->assertPromotedPublic($reflection, $parameter, $className);
 
         $property = $reflection->getProperty($name);
-        $descriptor = $this->resolveDescriptor($property, $parameter, $className);
+        $descriptor = $this->resolveDescriptor($property, $parameter, $className, $constructorDoc);
         $attributes = array_map(
             static fn($attribute): object => $attribute->newInstance(),
             $property->getAttributes(),
@@ -117,20 +121,16 @@ final class MetaFactoryPropertyReader
         ReflectionProperty $property,
         ReflectionParameter $parameter,
         string $className,
+        ?string $constructorDoc,
     ): TypeDescriptor {
         $descriptor = $this->typeReader->describe($parameter->getType());
-        $arrayItem = $this->arrayParser->arrayItemType(
-            $property->getDocComment() === false ? null : $property->getDocComment(),
-            $className,
-        );
-        if (
-            $arrayItem !== null
-            && $descriptor->kind === TypeDescriptor::KIND_BUILTIN
-            && $descriptor->builtin === 'array'
-        ) {
+        $propertyDoc = $property->getDocComment() === false ? null : $property->getDocComment();
+        $arrayItem = $this->arrayParser->arrayItemType($propertyDoc, $className)
+            ?? $this->arrayParser->paramItemType($constructorDoc, $parameter->getName(), $className);
+        if ($descriptor->kind === TypeDescriptor::KIND_BUILTIN && $descriptor->builtin === 'array') {
             return new TypeDescriptor(
                 kind: TypeDescriptor::KIND_ARRAY,
-                members: [$arrayItem],
+                members: $arrayItem === null ? [] : [$arrayItem],
                 nullability: $descriptor->nullability,
             );
         }

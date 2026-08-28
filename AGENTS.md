@@ -5,7 +5,7 @@ This repository belongs to JOOservices. Follow workspace root `AGENTS.md`.
 Project-specific:
 
 - PHP `>= 8.5`, zero runtime Composer `require`
-- First public line: **`v3.0.0`**; current line: **`v3.1.0`**
+- First public line: **`v3.0.0`**; current line: **`v3.2.0`**
 - All PHP tooling via Docker (`php:8.5-cli-bookworm`)
 - CI on self-hosted runner `runner1` (Linux X64); dedicated workflows only — never `jooservices/workflows`
 - Constructor + `with()` are both first-class; `from()` uses source keys, `with()` uses property names only
