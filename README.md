@@ -71,14 +71,14 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 - Arrays, JSON strings, simple objects, PSR-7 requests
 - Input naming strategies (camelCase / snake_case); output-side naming opt-in via Context
 - Global + property pipelines with options; input normalizers
-- Scalar, enum, `DateTimeInterface`, nested DTO, untyped `array` pass-through, PHPDoc typed arrays (`Type[]`, `array<Type>`, `array<K, V>`, `list<Type>`), native union types in stable documented order
+- Scalar, enum, `DateTimeInterface`, nested DTO, untyped `array` pass-through, PHPDoc typed arrays (`Type[]`, `array<Type>`, `array<K, V>`, `list<Type>` on `@var` or constructor `@param`), native union types in stable documented order
 
 **Validation, normalization, collections**
 
 - Opt-in validation via Context plus standalone instance validation; rule registry extensible via attributes
 - `toArray()` / `toJson()` / `jsonSerialize()`, transformers, lazy properties
 - Serialization filters: `only` / `except` / `maxDepth` / `wrap` / `includeLazy`
-- `DataCollection` and `PaginatedCollection` (duck-typed paginator support)
+- `DataCollection` (`toArray()` / `jsonSerialize()` / `all()`) and `PaginatedCollection` (duck-typed paginator support)
 
 **Schema, meta, exceptions**
 

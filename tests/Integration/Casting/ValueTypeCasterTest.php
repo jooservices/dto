@@ -14,10 +14,12 @@ use JOOservices\Dto\Tests\Fixtures\Casting\CastingFixtureTypedArrayOfDtoDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureArrayOrStringDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureAssocMixedArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureAssocStringArrayDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureConstructorParamArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureNonDtoNestedDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureTypedArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureUnionNumberDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureUntypedArrayDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureVarWinsOverParamDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionHolderDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionTypedDto;
 use JOOservices\Dto\Tests\Fixtures\MetaBagDto;
@@ -221,8 +223,7 @@ final class ValueTypeCasterTest extends TestCase
     }
 
     /**
-     * Constructor `@param array<string, mixed>` is not read; the property is
-     * still an untyped array and must pass associative values through.
+     * Constructor `@param array<string, mixed>` is mixed, so values pass through.
      *
      * @throws CastException
      * @throws HydrationException
@@ -236,6 +237,40 @@ final class ValueTypeCasterTest extends TestCase
         $dto = MetaBagDto::fromArray(['meta' => ['theme' => 'dark', 'count' => 3]]);
 
         self::assertSame(['theme' => 'dark', 'count' => 3], $dto->meta);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testConstructorParamTagsCastNamedArrayProperties(): void
+    {
+        $dto = CastingFixtureConstructorParamArrayDto::fromArray([
+            'ids' => ['1', '2'],
+            'labels' => ['24' => 24, '48' => 'https://example.test/48.png'],
+        ]);
+
+        self::assertSame([1, 2], $dto->ids);
+        self::assertSame(['24' => '24', '48' => 'https://example.test/48.png'], $dto->labels);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testPropertyVarTagWinsOverConstructorParamWhenCasting(): void
+    {
+        $dto = CastingFixtureVarWinsOverParamDto::fromArray(['values' => ['1', '2']]);
+
+        self::assertSame([1, 2], $dto->values);
     }
 
     /**

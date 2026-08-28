@@ -33,6 +33,49 @@ final class DocBlockArrayParser
     }
 
     /**
+     * Constructor `@param` item type for `$parameterName`. Property `@var` wins
+     * when both are present — callers should try `arrayItemType()` first.
+     *
+     * @param  class-string|null  $declaringClass
+     */
+    public function paramItemType(
+        ?string $docComment,
+        string $parameterName,
+        ?string $declaringClass = null,
+    ): ?TypeDescriptor {
+        if ($docComment === null) {
+            return null;
+        }
+
+        $quoted = preg_quote($parameterName, '/');
+
+        if (
+            preg_match(
+                '/@param\s+(?:null\|)?\??(?:list|array)<([^>]+)>(?:\|null)?\s+\$' . $quoted . '\b/',
+                $docComment,
+                $match,
+            ) === 1
+        ) {
+            $valueType = $this->genericValueType($match[1]);
+            if ($valueType !== null) {
+                return $this->named($valueType, $declaringClass);
+            }
+        }
+
+        if (
+            preg_match(
+                '/@param\s+(?:null\|)?\??([^\s\[]+)\[\](?:\|null)?\s+\$' . $quoted . '\b/',
+                $docComment,
+                $match,
+            ) === 1
+        ) {
+            return $this->named($match[1], $declaringClass);
+        }
+
+        return null;
+    }
+
+    /**
      * `array<V>` and `list<V>` yield V. `array<K, V>` yields V (key type is unused).
      * Nested generics are left unparsed so the property stays an untyped array.
      */
