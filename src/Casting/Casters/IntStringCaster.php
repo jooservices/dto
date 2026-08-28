@@ -48,7 +48,11 @@ final class IntStringCaster
      */
     private function assertWithinIntegerRange(PropertyMeta $property, string $value): void
     {
-        $digits = ltrim($value, '+-');
+        $digits = ltrim(ltrim($value, '+-'), '0');
+        if ($digits === '') {
+            return;
+        }
+
         if (strlen($digits) >= strlen((string) PHP_INT_MAX) && $digits > (string) PHP_INT_MAX) {
             throw $this->support->mismatch($property, 'int', $value);
         }

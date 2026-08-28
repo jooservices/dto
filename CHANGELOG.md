@@ -9,6 +9,18 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+### Fixed
+
+- Nested DTO `equals()` / `hash()` compare canonical value state, including `#[Hidden]` and `#[Redact]` secrets, instead of object identity or `jsonSerialize()` output
+- `clone()` / `with()` deep-copy nested `Data` instances and mutable `DateTime` values so copies do not alias the original
+- JSON hydration keeps integers larger than 2^53 as strings (`JSON_BIGINT_AS_STRING`)
+- Instance `toJson()` runs `beforeSerialization()` so it matches `toArray()`
+- File metadata cache misses when the class source file no longer matches the stored SHA-256
+- Integer strings with leading zeros that overflow `PHP_INT_MAX` are rejected instead of wrapping
+- `fromJson()` / `fromObject()` apply `transformInput()` after normalizing to an array
+- `fromRequest()` decodes a JSON string parsed body (`JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING`); `null` body stays query-only
+- Package version marker is `3.0.0` (no longer `3.0.0-dev`)
+
 ## [3.0.0] - 2026-08-22
 
 ### Added

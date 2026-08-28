@@ -14,7 +14,12 @@ use JOOservices\Dto\Exceptions\CastException;
 use JOOservices\Dto\Exceptions\HydrationException;
 use JOOservices\Dto\Exceptions\MappingException;
 use JOOservices\Dto\Exceptions\ValidationException;
+use JOOservices\Dto\Tests\Fixtures\CoreFixtureBeforeSerializationDto;
 use JOOservices\Dto\Tests\Fixtures\CoreFixtureMixedHolderDto;
+use JOOservices\Dto\Tests\Fixtures\CoreFixtureNestedMutableDto;
+use JOOservices\Dto\Tests\Fixtures\HiddenAndRedactConflictDto;
+use JOOservices\Dto\Tests\Fixtures\ProfileDto;
+use JOOservices\Dto\Tests\Fixtures\SecretDto;
 use JOOservices\Dto\Tests\Fixtures\UserData;
 use JOOservices\Dto\Tests\Fixtures\UserDto;
 use JOOservices\Dto\Tests\Support\FakeUser;
@@ -185,5 +190,103 @@ final class CoreBasicsTest extends TestCase
         $dto = CoreFixtureMixedHolderDto::fromArray(['payload' => ['nested' => true]]);
 
         self::assertSame(['nested' => true], $dto->payload);
+    }
+
+    /**
+     * Independently hydrated graphs with equal nested DTO values compare by value.
+     *
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testNestedDtoEqualsAndHashUseValueSemantics(): void
+    {
+        $payload = [
+            'user' => ['name' => 'Ada', 'age' => 36],
+            'address' => ['city' => 'Paris'],
+        ];
+        $left = ProfileDto::fromArray($payload);
+        $right = ProfileDto::fromArray($payload);
+
+        self::assertNotSame($left->user, $right->user);
+        self::assertTrue($left->equals($right));
+        self::assertSame($left->hash(), $right->hash());
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testCloneDoesNotAliasNestedDataInstances(): void
+    {
+        $original = new CoreFixtureNestedMutableDto(
+            new UserData(name: 'Ada', age: 36),
+            'hidden-token',
+        );
+
+        $cloned = $original->clone();
+        $patched = $original->with();
+
+        self::assertNotSame($original->profile, $cloned->profile);
+        self::assertNotSame($original->profile, $patched->profile);
+
+        $cloned->profile->name = 'Changed';
+        self::assertSame('Ada', $original->profile->name);
+        self::assertSame('Ada', $patched->profile->name);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function testHiddenAndRedactValuesParticipateInEqualsAndHash(): void
+    {
+        $hiddenLeft = new HiddenAndRedactConflictDto('alpha');
+        $hiddenRight = new HiddenAndRedactConflictDto('alpha');
+        $hiddenOther = new HiddenAndRedactConflictDto('beta');
+
+        self::assertTrue($hiddenLeft->equals($hiddenRight));
+        self::assertSame($hiddenLeft->hash(), $hiddenRight->hash());
+        self::assertFalse($hiddenLeft->equals($hiddenOther));
+        self::assertNotSame($hiddenLeft->hash(), $hiddenOther->hash());
+
+        $secretLeft = new SecretDto('ada', 'pass-one');
+        $secretRight = new SecretDto('ada', 'pass-one');
+        $secretOther = new SecretDto('ada', 'pass-two');
+
+        self::assertTrue($secretLeft->equals($secretRight));
+        self::assertSame($secretLeft->hash(), $secretRight->hash());
+        self::assertFalse($secretLeft->equals($secretOther));
+        self::assertNotSame($secretLeft->hash(), $secretOther->hash());
+
+        $nestedLeft = new CoreFixtureNestedMutableDto(new UserData('Ada', 36), 'tok-a');
+        $nestedRight = new CoreFixtureNestedMutableDto(new UserData('Ada', 36), 'tok-a');
+        $nestedOther = new CoreFixtureNestedMutableDto(new UserData('Ada', 36), 'tok-b');
+
+        self::assertTrue($nestedLeft->equals($nestedRight));
+        self::assertSame($nestedLeft->hash(), $nestedRight->hash());
+        self::assertFalse($nestedLeft->equals($nestedOther));
+        self::assertNotSame($nestedLeft->hash(), $nestedOther->hash());
+    }
+
+    /**
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ReflectionException
+     */
+    public function testToJsonAppliesBeforeSerialization(): void
+    {
+        $dto = new CoreFixtureBeforeSerializationDto('ada');
+
+        self::assertSame(['name' => 'ADA'], $dto->toArray());
+        self::assertSame('{"name":"ADA"}', $dto->toJson());
     }
 }
