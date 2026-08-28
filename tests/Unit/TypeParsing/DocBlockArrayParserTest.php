@@ -166,4 +166,59 @@ final class DocBlockArrayParserTest extends TestCase
         self::assertNotNull($type);
         self::assertSame(AddressDto::class, $type->className);
     }
+
+    public function testParamItemTypeReturnsNullWhenDocCommentIsAbsent(): void
+    {
+        self::assertNull((new DocBlockArrayParser())->paramItemType(null, 'ids'));
+    }
+
+    public function testParamItemTypeParsesGenericListForTheNamedParameter(): void
+    {
+        $doc = "/**\n * @param list<int> \$ids\n * @param array<string, string> \$labels\n */";
+
+        $ids = (new DocBlockArrayParser())->paramItemType($doc, 'ids');
+        $labels = (new DocBlockArrayParser())->paramItemType($doc, 'labels');
+
+        self::assertNotNull($ids);
+        self::assertSame('int', $ids->builtin);
+        self::assertNotNull($labels);
+        self::assertSame('string', $labels->builtin);
+    }
+
+    public function testParamItemTypeIgnoresADifferentParameterName(): void
+    {
+        $doc = '/** @param list<int> $ids */';
+
+        self::assertNull((new DocBlockArrayParser())->paramItemType($doc, 'labels'));
+    }
+
+    public function testParamItemTypeParsesBracketSyntax(): void
+    {
+        $doc = '/** @param int[] $ids */';
+
+        $type = (new DocBlockArrayParser())->paramItemType($doc, 'ids');
+
+        self::assertNotNull($type);
+        self::assertSame('int', $type->builtin);
+    }
+
+    public function testParamItemTypeStripsNullableUnionSuffix(): void
+    {
+        $doc = '/** @param array<string, mixed>|null $meta */';
+
+        $type = (new DocBlockArrayParser())->paramItemType($doc, 'meta');
+
+        self::assertNotNull($type);
+        self::assertSame(TypeDescriptor::KIND_MIXED, $type->kind);
+    }
+
+    public function testParamItemTypeResolvesRelativeClassName(): void
+    {
+        $doc = '/** @param list<AddressDto> $addresses */';
+
+        $type = (new DocBlockArrayParser())->paramItemType($doc, 'addresses', UserDto::class);
+
+        self::assertNotNull($type);
+        self::assertSame(AddressDto::class, $type->className);
+    }
 }

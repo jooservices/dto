@@ -11,6 +11,11 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [3.2.0] - 2026-08-28
 
+### Added
+
+- Constructor `@param` array item types (`list<T>`, `array<K, V>`, `T[]`) are read when the promoted property has no `@var`; `@var` still wins if both are present
+- `DataCollection::toArray()` returns the same array as `jsonSerialize()` (including `wrap()`)
+
 ### Fixed
 
 - Native `array` properties hydrate as a pass-through instead of throwing `CastException: No caster matched the value`

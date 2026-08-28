@@ -9,7 +9,9 @@ use JOOservices\Dto\Core\Dto;
 final class CastingFixtureUntypedArrayDto extends Dto
 {
     /**
-     * @param  array<int|string, mixed>  $categories
+     * Untyped on purpose: no `@var` / `@param` array item type.
+     *
+     * @phpstan-ignore missingType.iterableValue
      */
     public function __construct(
         public readonly array $categories = [],

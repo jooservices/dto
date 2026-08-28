@@ -9,8 +9,10 @@ use JOOservices\Dto\Meta\MemoryMetaCache;
 use JOOservices\Dto\Meta\MetaFactory;
 use JOOservices\Dto\Meta\TypeDescriptor;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureAssocMixedArrayDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureConstructorParamArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureTypedArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureUntypedArrayDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureVarWinsOverParamDto;
 use JOOservices\Dto\Tests\Fixtures\EnumHolderDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionHolderDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionTypedDto;
@@ -65,13 +67,13 @@ final class MetaFactoryTest extends TestCase
     }
 
     /**
-     * `@param` on the constructor is ignored; only `@var` on the promoted
-     * property supplies an item type.
+     * Constructor `@param` supplies the item type when the promoted property
+     * has no `@var`.
      *
      * @throws HydrationException
      * @throws ReflectionException
      */
-    public function testConstructorParamTagDoesNotSupplyArrayItemType(): void
+    public function testConstructorParamTagSuppliesArrayItemType(): void
     {
         $factory = new MetaFactory(new MemoryMetaCache());
         $meta = $factory->create(MetaBagDto::class);
@@ -79,7 +81,39 @@ final class MetaFactoryTest extends TestCase
 
         Assert::assertNotNull($type);
         Assert::assertSame(TypeDescriptor::KIND_ARRAY, $type->kind);
-        Assert::assertSame([], $type->members);
+        Assert::assertCount(1, $type->members);
+        Assert::assertSame(TypeDescriptor::KIND_MIXED, $type->members[0]->kind);
+    }
+
+    /**
+     * @throws HydrationException
+     * @throws ReflectionException
+     */
+    public function testConstructorParamTagsAreMatchedByParameterName(): void
+    {
+        $factory = new MetaFactory(new MemoryMetaCache());
+        $meta = $factory->create(CastingFixtureConstructorParamArrayDto::class);
+        $ids = $meta->property('ids')?->type;
+        $labels = $meta->property('labels')?->type;
+
+        Assert::assertNotNull($ids);
+        Assert::assertSame('int', $ids->members[0]->builtin ?? null);
+        Assert::assertNotNull($labels);
+        Assert::assertSame('string', $labels->members[0]->builtin ?? null);
+    }
+
+    /**
+     * @throws HydrationException
+     * @throws ReflectionException
+     */
+    public function testPropertyVarTagWinsOverConstructorParamTag(): void
+    {
+        $factory = new MetaFactory(new MemoryMetaCache());
+        $meta = $factory->create(CastingFixtureVarWinsOverParamDto::class);
+        $type = $meta->property('values')?->type;
+
+        Assert::assertNotNull($type);
+        Assert::assertSame('int', $type->members[0]->builtin ?? null);
     }
 
     /**
