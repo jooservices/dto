@@ -5,7 +5,7 @@
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jooservices_dto&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jooservices_dto)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
-[![Release](https://img.shields.io/badge/version-3.0.0-blue.svg)](CHANGELOG.md)
+[![Release](https://img.shields.io/badge/version-3.1.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `Data` objects, constructor-first hydration, opt-in validation, serialization control, collections, and JSON Schema / OpenAPI generation. Zero runtime dependencies.
@@ -19,7 +19,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 | | |
 | --- | --- |
-| Status | **`v3.0.0` — first public release** |
+| Status | **`v3.1.0` — current release** |
 | First public line | `v3.0.0` (the archived `v1.x` / `v2.x` implementation is a separate codebase lineage, not an ancestor of this one) |
 | Git history | Fresh repository — clean rewrite, old repo untouched in archive |
 | Compatibility | **None with older versions.** Class layout, behavior contracts, exception hierarchy, and engine internals all changed |

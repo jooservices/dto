@@ -14,9 +14,9 @@ final class PackageInfoTest extends TestCase
         self::assertSame('jooservices/dto', PackageInfo::name());
     }
 
-    public function testVersionReturnsDevVersion(): void
+    public function testVersionReturnsReleaseVersion(): void
     {
-        self::assertSame('3.0.0-dev', PackageInfo::version());
+        self::assertSame('3.1.0', PackageInfo::version());
     }
 
     public function testNameConstantMatchesHelper(): void

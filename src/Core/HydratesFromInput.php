@@ -52,9 +52,11 @@ abstract class HydratesFromInput
      */
     public static function from(mixed $source, ?Context $ctx = null): static
     {
-        if (is_array($source)) {
-            $source = static::transformInput($source);
+        if (! is_array($source)) {
+            $source = static::engine()->normalizeInput($source);
         }
+
+        $source = static::transformInput($source);
 
         /** @var static $instance */
         $instance = static::engine()->hydrate(static::class, $source, $ctx);
@@ -161,15 +163,23 @@ abstract class HydratesFromInput
         if (is_array($body)) {
             /** @var array<string, mixed> $body */
             $merged = array_merge($merged, $body);
-        } elseif (is_object($body)) {
-            /** @var array<string, mixed> $bodyArray */
-            $bodyArray = json_decode(
-                json_encode($body, JSON_THROW_ON_ERROR),
+        } elseif (is_string($body) || is_object($body)) {
+            $json = is_string($body) ? $body : json_encode($body, JSON_THROW_ON_ERROR);
+            $decoded = json_decode(
+                $json,
                 true,
                 32,
-                JSON_THROW_ON_ERROR,
+                JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING,
             );
-            $merged = array_merge($merged, $bodyArray);
+            if (! is_array($decoded)) {
+                throw new HydrationException(
+                    message: 'JSON request body must decode to an object/array.',
+                    givenType: get_debug_type($decoded),
+                );
+            }
+
+            /** @var array<string, mixed> $decoded */
+            $merged = array_merge($merged, $decoded);
         }
 
         return static::from($merged, $ctx);

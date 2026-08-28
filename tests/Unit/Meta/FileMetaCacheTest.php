@@ -91,7 +91,7 @@ final class FileMetaCacheTest extends TestCase
         ) . '.cache';
         file_put_contents(
             $path,
-            '{"v":"2","class":"' . ValidationFixtureRegexDto::class . '","hash":"deadbeef","payload":"YQ=="}',
+            '{"v":"3","class":"' . ValidationFixtureRegexDto::class . '","hash":"deadbeef","payload":"YQ=="}',
         );
 
         $fresh = new FileMetaCache($this->directory, $this->signingKey);
@@ -105,5 +105,37 @@ final class FileMetaCacheTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         new FileMetaCache($this->directory, '');
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws \JOOservices\Dto\Exceptions\HydrationException
+     * @throws JsonException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \Random\RandomException
+     */
+    public function testStaleSourceHashIsTreatedAsMiss(): void
+    {
+        $factory = new MetaFactory(new MemoryMetaCache());
+        $meta = $factory->create(ValidationFixtureRegexDto::class);
+
+        $cache = new FileMetaCache($this->directory, $this->signingKey);
+        $cache->set(ValidationFixtureRegexDto::class, $meta);
+
+        $path = $this->directory . '/' . hash(
+            'xxh3',
+            $this->signingKey . "\0" . ValidationFixtureRegexDto::class,
+        ) . '.cache';
+        $raw = file_get_contents($path);
+        self::assertNotFalse($raw);
+
+        $envelope = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
+        self::assertIsArray($envelope);
+        $envelope['source'] = hash('sha256', 'stale-class-source');
+        file_put_contents($path, json_encode($envelope, JSON_THROW_ON_ERROR));
+
+        $fresh = new FileMetaCache($this->directory, $this->signingKey);
+        Assert::assertNull($fresh->get(ValidationFixtureRegexDto::class));
     }
 }
