@@ -16,7 +16,7 @@ final class PackageInfoTest extends TestCase
 
     public function testVersionReturnsReleaseVersion(): void
     {
-        self::assertSame('3.0.0', PackageInfo::version());
+        self::assertSame('3.1.0', PackageInfo::version());
     }
 
     public function testNameConstantMatchesHelper(): void

@@ -19,7 +19,7 @@ final class OpenApiGenerator extends AbstractSchemaGenerator
             'openapi' => '3.1.0',
             'info' => [
                 'title' => 'DTO schemas',
-                'version' => '3.0.0-dev',
+                'version' => '3.1.0',
             ],
             'components' => [
                 'schemas' => $defs,
