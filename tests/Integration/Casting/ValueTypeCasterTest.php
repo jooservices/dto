@@ -11,11 +11,16 @@ use JOOservices\Dto\Exceptions\MappingException;
 use JOOservices\Dto\Exceptions\ValidationException;
 use JOOservices\Dto\Tests\Fixtures\AddressDto;
 use JOOservices\Dto\Tests\Fixtures\Casting\CastingFixtureTypedArrayOfDtoDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureArrayOrStringDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureAssocMixedArrayDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureAssocStringArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureNonDtoNestedDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureTypedArrayDto;
 use JOOservices\Dto\Tests\Fixtures\CastingFixtureUnionNumberDto;
+use JOOservices\Dto\Tests\Fixtures\CastingFixtureUntypedArrayDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionHolderDto;
 use JOOservices\Dto\Tests\Fixtures\IntersectionTypedDto;
+use JOOservices\Dto\Tests\Fixtures\MetaBagDto;
 use JOOservices\Dto\Tests\Fixtures\ProfileDto;
 use JOOservices\Dto\Tests\TestCase;
 use ReflectionException;
@@ -165,6 +170,139 @@ final class ValueTypeCasterTest extends TestCase
         self::assertInstanceOf(AddressDto::class, $dto->addresses[0]);
         self::assertSame('Hanoi', $dto->addresses[0]->city);
         self::assertSame('Saigon', $dto->addresses[1]->city);
+    }
+
+    /**
+     * Untyped `array` properties must hydrate as a pass-through. Reflection
+     * describes them as KIND_BUILTIN `array`, which previously fell through
+     * to the caster registry and threw "No caster matched the value".
+     *
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testUntypedArrayPassesValuesThrough(): void
+    {
+        $dto = CastingFixtureUntypedArrayDto::fromArray(['categories' => [1, 2, 3]]);
+
+        self::assertSame([1, 2, 3], $dto->categories);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testUntypedArrayUsesConstructorDefaultWhenOmitted(): void
+    {
+        $dto = CastingFixtureUntypedArrayDto::fromArray([]);
+
+        self::assertSame([], $dto->categories);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testUntypedArrayRejectsANonArrayValue(): void
+    {
+        $this->expectException(CastException::class);
+        CastingFixtureUntypedArrayDto::fromArray(['categories' => 'nope']);
+    }
+
+    /**
+     * Constructor `@param array<string, mixed>` is not read; the property is
+     * still an untyped array and must pass associative values through.
+     *
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testUntypedArrayHydratesAssociativeValues(): void
+    {
+        $dto = MetaBagDto::fromArray(['meta' => ['theme' => 'dark', 'count' => 3]]);
+
+        self::assertSame(['theme' => 'dark', 'count' => 3], $dto->meta);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testAssociativeMixedArrayPassesValuesThrough(): void
+    {
+        $dto = CastingFixtureAssocMixedArrayDto::fromArray([
+            'meta' => ['theme' => 'dark', 'ids' => [1, 2], 'ok' => true],
+        ]);
+
+        self::assertSame(['theme' => 'dark', 'ids' => [1, 2], 'ok' => true], $dto->meta);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testAssociativeStringArrayCastsValuesAndKeepsKeys(): void
+    {
+        $dto = CastingFixtureAssocStringArrayDto::fromArray([
+            'avatarUrls' => ['24' => 24, '48' => 'https://example.test/48.png'],
+        ]);
+
+        self::assertSame(
+            ['24' => '24', '48' => 'https://example.test/48.png'],
+            $dto->avatarUrls,
+        );
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testArrayOrStringUnionKeepsAnArrayMatch(): void
+    {
+        $dto = CastingFixtureArrayOrStringDto::fromArray(['value' => [1, 2]]);
+
+        self::assertSame([1, 2], $dto->value);
+    }
+
+    /**
+     * @throws CastException
+     * @throws HydrationException
+     * @throws InvalidArgumentException
+     * @throws MappingException
+     * @throws ReflectionException
+     * @throws ValidationException
+     */
+    public function testArrayOrStringUnionKeepsAStringMatch(): void
+    {
+        $dto = CastingFixtureArrayOrStringDto::fromArray(['value' => 'hello']);
+
+        self::assertSame('hello', $dto->value);
     }
 
     /**

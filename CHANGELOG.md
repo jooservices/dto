@@ -9,6 +9,18 @@ All notable changes to this package are documented in this file. Format follows 
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-08-28
+
+### Fixed
+
+- Native `array` properties hydrate as a pass-through instead of throwing `CastException: No caster matched the value`
+- PHPDoc `@var array<K, V>` and `@var array<string, mixed>` now take the value type (the previous regex kept the first token, so `string,` / dropped `mixed`)
+
+### Changed
+
+- Builtin `array` properties are described as `KIND_ARRAY` even without a `@var` item type, so casting and JSON Schema share one path
+- `array|string` unions treat an array value as an exact match
+
 ## [3.1.0] - 2026-08-28
 
 ### Fixed
@@ -120,6 +132,7 @@ Security:
 - File metadata cache: lock files, verify freshness envelope **before** deserialization, strict class allowlist, no error suppression
 - Explicit JSON decode depth and flags with documented limits
 
-[Unreleased]: https://github.com/jooservices/dto/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/jooservices/dto/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/jooservices/dto/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/jooservices/dto/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/jooservices/dto/releases/tag/v3.0.0

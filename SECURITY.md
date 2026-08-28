@@ -4,7 +4,8 @@
 
 | Version line | Status |
 | --- | --- |
-| `3.1.x` (this repository) | Current supported — receives security fixes |
+| `3.2.x` (this repository) | Current supported — receives security fixes |
+| `3.1.x` | Supported — receives security fixes |
 | `3.0.x` | Supported — receives security fixes |
 | `v1.x` / `v2.x` | **End of life.** The archived previous implementation is a separate codebase lineage and receives no fixes |
 

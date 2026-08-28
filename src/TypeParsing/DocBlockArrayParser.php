@@ -18,12 +18,45 @@ final class DocBlockArrayParser
             return null;
         }
 
-        if (preg_match('/@var\s+(?:list|array)<\s*([^>\s]+)\s*>/', $docComment, $match) === 1) {
-            return $this->named($match[1], $declaringClass);
+        if (preg_match('/@var\s+(?:list|array)<([^>]+)>/', $docComment, $match) === 1) {
+            $valueType = $this->genericValueType($match[1]);
+            if ($valueType !== null) {
+                return $this->named($valueType, $declaringClass);
+            }
         }
 
         if (preg_match('/@var\s+([^\s\[]+)\[\]/', $docComment, $match) === 1) {
             return $this->named($match[1], $declaringClass);
+        }
+
+        return null;
+    }
+
+    /**
+     * `array<V>` and `list<V>` yield V. `array<K, V>` yields V (key type is unused).
+     * Nested generics are left unparsed so the property stays an untyped array.
+     */
+    private function genericValueType(string $inner): ?string
+    {
+        if (str_contains($inner, '<')) {
+            return null;
+        }
+
+        $parts = [];
+        foreach (explode(',', $inner) as $part) {
+            $trimmed = trim($part);
+            if ($trimmed !== '') {
+                $parts[] = $trimmed;
+            }
+        }
+
+        $count = count($parts);
+        if ($count === 1) {
+            return $parts[0];
+        }
+
+        if ($count === 2) {
+            return $parts[1];
         }
 
         return null;

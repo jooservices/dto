@@ -65,6 +65,56 @@ final class DocBlockArrayParserTest extends TestCase
         self::assertSame(UserDto::class, $type->className);
     }
 
+    public function testParsesGenericArrayWithKeyAndValueTypes(): void
+    {
+        $doc = '/** @var array<string, string> */';
+
+        $type = (new DocBlockArrayParser())->arrayItemType($doc);
+
+        self::assertNotNull($type);
+        self::assertSame(TypeDescriptor::KIND_BUILTIN, $type->kind);
+        self::assertSame('string', $type->builtin);
+    }
+
+    public function testParsesGenericArrayWithMixedValueType(): void
+    {
+        $doc = '/** @var array<string, mixed> */';
+
+        $type = (new DocBlockArrayParser())->arrayItemType($doc);
+
+        self::assertNotNull($type);
+        self::assertSame(TypeDescriptor::KIND_MIXED, $type->kind);
+        self::assertTrue($type->allowsNull());
+    }
+
+    public function testParsesGenericArrayWithWhitespaceAroundComma(): void
+    {
+        $doc = '/** @var array< int , string > */';
+
+        $type = (new DocBlockArrayParser())->arrayItemType($doc);
+
+        self::assertNotNull($type);
+        self::assertSame('string', $type->builtin);
+    }
+
+    public function testParsesGenericArrayWithClassValueType(): void
+    {
+        $doc = '/** @var array<string, ' . UserDto::class . '> */';
+
+        $type = (new DocBlockArrayParser())->arrayItemType($doc);
+
+        self::assertNotNull($type);
+        self::assertSame(TypeDescriptor::KIND_CLASS, $type->kind);
+        self::assertSame(UserDto::class, $type->className);
+    }
+
+    public function testReturnsNullForNestedGenericArray(): void
+    {
+        $doc = '/** @var array<int, array<string>> */';
+
+        self::assertNull((new DocBlockArrayParser())->arrayItemType($doc));
+    }
+
     public function testParsesGenericListSyntax(): void
     {
         $doc = '/** @var list<string> */';

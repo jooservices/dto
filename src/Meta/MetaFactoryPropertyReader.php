@@ -123,14 +123,10 @@ final class MetaFactoryPropertyReader
             $property->getDocComment() === false ? null : $property->getDocComment(),
             $className,
         );
-        if (
-            $arrayItem !== null
-            && $descriptor->kind === TypeDescriptor::KIND_BUILTIN
-            && $descriptor->builtin === 'array'
-        ) {
+        if ($descriptor->kind === TypeDescriptor::KIND_BUILTIN && $descriptor->builtin === 'array') {
             return new TypeDescriptor(
                 kind: TypeDescriptor::KIND_ARRAY,
-                members: [$arrayItem],
+                members: $arrayItem === null ? [] : [$arrayItem],
                 nullability: $descriptor->nullability,
             );
         }
