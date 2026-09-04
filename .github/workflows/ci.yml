@@ -1,4 +1,4 @@
-# Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
+# Dedicated CI for jooservices/dto — GitHub-hosted runners
 # Pull-request quality gate: full pipeline. Post-merge heads run ci-post-merge.yml.
 name: CI
 

@@ -1,5 +1,5 @@
-# Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
-# Post-merge sanity run on master/develop heads. Full gate lives in ci.yml (pull requests).
+# Dedicated CI for jooservices/dto — post-merge sanity on master/develop heads
+# Full gate lives in ci.yml (pull requests).
 name: CI post-merge
 
 on:
