@@ -1,9 +1,5 @@
 # jooservices/dto
 
-Follow the JOOservices workspace `AGENTS.md` at `../AGENTS.md`
-(identity, soulevilx, quality, runtime, coding practice). Do not weaken those
-rules.
-
 This file adds project-only rules.
 
 - PHP `>= 8.5`, single runtime Composer `require`: `psr/http-message` (interface-only)
