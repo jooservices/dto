@@ -1,4 +1,4 @@
-# Tag-driven release — only after owner go-ahead. Dedicated; no jooservices/workflows.
+# Tag-driven release — only after owner go-ahead.
 name: Release
 
 on:

@@ -186,7 +186,7 @@ validate → lint matrix → test matrix ┐
          SAST                         ┘
 ```
 
-Workflows run on GitHub-hosted `ubuntu-latest` runners (never `jooservices/workflows`):
+Workflows run on GitHub-hosted `ubuntu-latest` runners:
 
 | Workflow | Purpose |
 | --- | --- |

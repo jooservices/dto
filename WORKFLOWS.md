@@ -156,8 +156,6 @@ gantt
 
 - All jobs use GitHub-hosted `ubuntu-latest`. There is no self-hosted runner pool
   and no local `.github/actions/self-hosted-prepare` composite.
-- All declared workflows use dedicated repository configuration; none use
-  `jooservices/workflows`.
 - Secret scanning has two layers: GitHub Secret Scanning and Push Protection
   detect or block supported secrets at GitHub, while CI scans the checked-out
   Git history with the MIT-licensed Gitleaks OSS CLI. GitHub Secret Scanning
