@@ -177,7 +177,7 @@ IDE setup: Cursor / VS Code — install recommended workspace extensions; format
 - Feature/fix branches from `develop`, PR back into `develop`; releases via `release/<version>` → `master`; hotfixes from `master`; tags from `master`
 - PRs required, all CI checks green before merge
 
-Required CI flow (dedicated workflows on self-hosted Linux X64 runners, PHP jobs in Docker):
+Required CI flow (dedicated workflows on GitHub-hosted `ubuntu-latest`, PHP jobs in Docker):
 
 ```text
 validate → lint matrix → test matrix ┐
@@ -186,24 +186,25 @@ validate → lint matrix → test matrix ┐
          SAST                         ┘
 ```
 
-Workflows run on self-hosted Linux X64 runners:
+Workflows run on GitHub-hosted `ubuntu-latest` runners (never `jooservices/workflows`):
 
 | Workflow | Purpose |
 | --- | --- |
-| `ci.yml` | validate → lint/test matrices + parallel security jobs → 85% coverage → Codecov + Sonar |
+| `ci.yml` | PR gate: validate → lint/test matrices + parallel security jobs → 85% coverage → Codecov + Sonar |
+| `ci-post-merge.yml` | Push to `master`/`develop`: validate, tests + coverage → Codecov + Sonar |
 | `commitlint.yml` | Conventional Commits on every PR commit |
 | `codeql.yml` | CodeQL analysis for GitHub Actions workflows |
 | `workflow-audit.yml` | actionlint + zizmor on workflow files |
 | `release.yml` | tag gates, Trivy, SBOM, GitHub Release |
 | `semantic-pr.yml` | Conventional Commits PR title |
-| `pr-labeler.yml` / `pr-size-labeler.yml` | path and size labels |
+| `pr-labeler.yml` | path labels |
 | `scorecard.yml` | OpenSSF Scorecard |
 | `link-check.yml` | weekly Markdown link check |
-| `stale.yml` / `first-interaction.yml` | housekeeping and contributor welcome |
+| `stale.yml` | stale issues/PRs |
 
-Also: Dependabot (Composer + GitHub Actions), CODEOWNERS, labeler config.
+Also: Dependabot (Composer + GitHub Actions), CODEOWNERS, labeler config. See [WORKFLOWS.md](WORKFLOWS.md).
 
-**CI secrets (organization level):** `CODECOV_TOKEN` and `SONAR_TOKEN` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. `SONAR_HOST_URL` is optional and defaults to `https://sonarcloud.io`. Grant this repository access when onboarding. No release tag is required to test CI; any push or PR to `develop` or `master` runs the pipeline.
+**CI secrets (organization level):** `CODECOV_TOKEN` and `SONAR_TOKEN` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. `SONAR_HOST_URL` is optional and defaults to `https://sonarcloud.io`. Grant this repository access when onboarding. PRs to `develop`/`master` run `ci.yml`; pushes to those branches run `ci-post-merge.yml`.
 
 Quality gates: Pint (`per` preset) · PHPCS full `PSR12` · PHPStan max level, zero ignores · PHPMD · PHP-CS-Fixer (PHPDoc-only).
 
