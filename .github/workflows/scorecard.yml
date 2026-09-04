@@ -14,8 +14,7 @@ concurrency:
 jobs:
   scorecard:
     name: Scorecard Analysis
-    # ossf/scorecard-action's publish_results requires a verifiable GitHub-hosted
-    # Ubuntu runner — it cannot attest self-hosted environments.
+    # publish_results requires a GitHub-hosted Ubuntu runner.
     runs-on: ubuntu-latest
     permissions:
       security-events: write

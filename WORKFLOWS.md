@@ -1,9 +1,9 @@
 # GitHub Actions workflow flow
 
 This document describes the workflows currently defined in
-`.github/workflows/`. All jobs run on self-hosted Linux X64 runners in the
-repository runner pool. PHP-related commands run through the repository Docker
-Compose setup.
+`.github/workflows/`. All jobs run on GitHub-hosted `ubuntu-latest` runners.
+PHP-related commands run through the repository Docker Compose setup
+(`tools/ci/docker-compose`).
 
 ## Overall event flow
 
@@ -11,21 +11,17 @@ Compose setup.
 flowchart TD
     native[GitHub Secret Scanning and Push Protection] --> Alerts[GitHub security alerts or blocked push]
 
-    push[Push to master or develop] --> CI[CI]
+    push[Push to master or develop] --> PostMerge[CI post-merge]
     push --> CodeQL[CodeQL]
-    push --> Drafter[Release Drafter]
     push --> Audit{Changed files under .github?}
     Audit -->|yes| WorkflowAudit[Workflow audit]
 
-    pr[PR opened / edited / synchronized / reopened] --> CI
+    pr[PR opened / edited / synchronized / reopened] --> CI[CI]
     pr --> CodeQL
     pr --> Commitlint[Commitlint]
     pr --> Semantic[Semantic PR Title]
     pr --> PathLabel[PR Labeler]
-    pr --> SizeLabel[PR size labeler]
     pr --> Audit
-
-    first[First issue or PR] --> Welcome[First interaction]
 
     tag[Push tag v*.*.*] --> Release[Release]
 
@@ -51,7 +47,6 @@ flowchart TD
     PR --> CL[Validate commit messages]
     PR --> SPT[Validate PR title]
     PR --> PL[Apply path labels]
-    PR --> PSL[Apply size label]
     PR --> CQL[Analyze GitHub Actions with CodeQL]
     PR --> WA{Workflow files changed?}
     WA -->|yes| AL[Actionlint]
@@ -74,7 +69,7 @@ not wait for CI, and CI does not wait for those checks.
 
 ## CI (`ci.yml`)
 
-**Triggers:** push or pull request targeting `master` or `develop`.
+**Triggers:** pull request targeting `master` or `develop`.
 Concurrent runs for the same Git ref cancel older in-progress runs.
 
 ```mermaid
@@ -87,7 +82,7 @@ flowchart LR
     S --> C
     A --> C
 
-    V --- V1[Checkout, prepare runner, build PHP image]
+    V --- V1[Checkout, build PHP image]
     V --- V2[Restore/install Composer dependencies]
     V --- V3[composer validate --strict]
 
@@ -102,10 +97,10 @@ flowchart LR
     C --- C3[Upload to Codecov and SonarQube]
 ```
 
-Each CI job repairs prior Docker-owned workspace files and checks out the
-source. The validation, lint, test, dependency-security, and coverage jobs
-also prepare Docker and restore or install Composer dependencies. The
-dependency-security, secret-scan, and coverage jobs check out full Git history.
+## CI post-merge (`ci-post-merge.yml`)
+
+**Triggers:** push to `master` or `develop`. Lighter sanity after merge:
+validate, unit/integration coverage, Codecov, and SonarQube.
 
 ## Release flow (`release.yml`)
 
@@ -116,7 +111,7 @@ flowchart TD
     Tag[Push v*.*.* tag] --> Checkout[Checkout full history]
     Checkout --> Master{Tag commit is reachable from origin/master?}
     Master -->|no| Stop[Fail release]
-    Master -->|yes| Setup[Prepare runner, build PHP image, install dependencies]
+    Master -->|yes| Setup[Build PHP image, install dependencies]
     Setup --> Quality[Composer validate, lint, PHPUnit coverage]
     Quality --> Trivy[Scan filesystem and PHP Docker image with Trivy]
     Trivy --> SARIF[Upload filesystem SARIF]
@@ -135,9 +130,6 @@ publication path — the tag itself is the release trigger.
 | `commitlint.yml` | PR opened, edited, synchronized, reopened | Checkout full history → validate every PR commit against `.github/commitlint.config.mjs`. |
 | `semantic-pr.yml` | PR opened, edited, synchronized | Validate PR title type and require an uppercase first subject character. |
 | `pr-labeler.yml` | PR opened, synchronized, reopened | Checkout → apply labels from `.github/labeler.yml` based on changed paths. |
-| `pr-size-labeler.yml` | PR opened, synchronized, reopened | Checkout → apply `size/XS` through `size/XXL` based on changed-line thresholds. |
-| `first-interaction.yml` | First issue or PR opened | Post contributor welcome message and contribution/security guidance. |
-| `release-drafter.yml` | Push to `develop` or `master` | Checkout → update draft release notes using `.github/release-drafter.yml`. |
 | `link-check.yml` | Monday 04:00 UTC; manual | Checkout → Lychee checks Markdown links, excluding `vendor`, Packagist, Codecov, and mail links. |
 | `scorecard.yml` | Push to `master`; Monday 00:00 UTC; manual | Checkout full history → OpenSSF Scorecard → upload SARIF. |
 | `stale.yml` | Daily 01:00 UTC; manual | Mark issues/PRs stale after 60 inactive days; close 14 days later, except pinned/security/dependencies. |
@@ -160,15 +152,10 @@ gantt
     CodeQL                 :milestone, 06:00, 0m
 ```
 
-## Shared runner preparation
-
-Most workflows first repair ownership of `vendor/` and `build/`, which can be
-left root-owned by Docker. The PHP CI and release workflows additionally use
-the local composite action `.github/actions/self-hosted-prepare` before
-building or running the PHP container.
-
 ## Notes
 
+- All jobs use GitHub-hosted `ubuntu-latest`. There is no self-hosted runner pool
+  and no local `.github/actions/self-hosted-prepare` composite.
 - All declared workflows use dedicated repository configuration; none use
   `jooservices/workflows`.
 - Secret scanning has two layers: GitHub Secret Scanning and Push Protection
