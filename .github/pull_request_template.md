@@ -4,4 +4,4 @@
 ## Test plan
 - [ ] `make lint` (Docker)
 - [ ] `make test` (Docker)
-- [ ] CI green on self-hosted `runner1`
+- [ ] CI green

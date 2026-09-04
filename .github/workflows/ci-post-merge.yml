@@ -1,5 +1,5 @@
-# Dedicated CI for jooservices/dto — self-hosted runner1 (Linux X64)
-# Post-merge sanity run on master/develop heads. Full gate lives in ci.yml (pull requests).
+# Dedicated CI for jooservices/dto — GitHub-hosted runners
+# Post-merge sanity on master/develop heads. Full PR gate lives in ci.yml.
 name: CI post-merge
 
 on:
@@ -17,7 +17,7 @@ permissions:
 jobs:
   validate:
     name: Validate
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -47,7 +47,7 @@ jobs:
   test:
     name: Test (${{ matrix.name }})
     needs: [validate]
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: true
@@ -96,7 +96,7 @@ jobs:
   coverage:
     name: Coverage upload
     needs: [test]
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - name: Checkout
