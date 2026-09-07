@@ -1,8 +1,8 @@
 # jooservices/dto
 
 [![CI](https://github.com/jooservices/dto/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/jooservices/dto/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/jooservices/dto/branch/develop/graph/badge.svg?token=P53R9GC7UL)](https://codecov.io/gh/jooservices/dto/branch/develop)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jooservices_dto&metric=alert_status&branch=develop)](https://sonarcloud.io/summary/new_code?id=jooservices_dto&branch=develop)
+[![Coverage (develop)](https://codecov.io/gh/jooservices/dto/branch/develop/graph/badge.svg?token=P53R9GC7UL)](https://codecov.io/gh/jooservices/dto/branch/develop)
+[![Quality Gate (master)](https://sonarcloud.io/api/project_badges/measure?project=jooservices_dto&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jooservices_dto)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
 [![GitHub Release](https://img.shields.io/github/v/release/jooservices/dto?display_name=tag)](https://github.com/jooservices/dto/releases)
