@@ -5,7 +5,9 @@
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jooservices_dto&metric=alert_status&branch=develop)](https://sonarcloud.io/summary/new_code?id=jooservices_dto&branch=develop)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jooservices/dto/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jooservices/dto)
 [![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://www.php.net/)
-[![Release](https://img.shields.io/badge/version-3.2.0-blue.svg)](CHANGELOG.md)
+[![GitHub Release](https://img.shields.io/github/v/release/jooservices/dto?display_name=tag)](https://github.com/jooservices/dto/releases)
+[![Packagist Version](https://img.shields.io/packagist/v/jooservices/dto)](https://packagist.org/packages/jooservices/dto)
+[![Total Downloads](https://img.shields.io/packagist/dt/jooservices/dto)](https://packagist.org/packages/jooservices/dto)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `Data` objects, constructor-first hydration, opt-in validation, serialization control, collections, and JSON Schema / OpenAPI generation. One runtime dependency: `psr/http-message` (interface-only).
