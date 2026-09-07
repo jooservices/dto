@@ -1,8 +1,7 @@
 # GitHub Actions workflow flow
 
 This document describes the workflows currently defined in
-`.github/workflows/`. All jobs run on self-hosted Linux X64 runners in the
-repository runner pool. PHP-related commands run through the repository Docker
+`.github/workflows/`. All jobs run on GitHub-hosted Ubuntu runners. PHP-related commands run through the repository Docker
 Compose setup.
 
 ## Overall event flow
@@ -139,7 +138,7 @@ publication path — the tag itself is the release trigger.
 | `first-interaction.yml` | First issue or PR opened | Post contributor welcome message and contribution/security guidance. |
 | `release-drafter.yml` | Push to `develop` or `master` | Checkout → update draft release notes using `.github/release-drafter.yml`. |
 | `link-check.yml` | Monday 04:00 UTC; manual | Checkout → Lychee checks Markdown links, excluding `vendor`, Packagist, Codecov, and mail links. |
-| `scorecard.yml` | Push to `master`; Monday 00:00 UTC; manual | Checkout full history → OpenSSF Scorecard → upload SARIF. |
+| `scorecard.yml` | Push to `develop`; Monday 00:00 UTC; manual | Checkout full history → OpenSSF Scorecard → upload SARIF. |
 | `stale.yml` | Daily 01:00 UTC; manual | Mark issues/PRs stale after 60 inactive days; close 14 days later, except pinned/security/dependencies. |
 | `workflow-audit.yml` | `.github/**` changes on push/PR; Monday 03:00 UTC; manual | Runs independent jobs: Actionlint checks workflow syntax and Zizmor scans workflow security, then uploads Zizmor SARIF when produced. |
 

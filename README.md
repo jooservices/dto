@@ -177,7 +177,7 @@ IDE setup: Cursor / VS Code — install recommended workspace extensions; format
 - Feature/fix branches from `develop`, PR back into `develop`; releases via `release/<version>` → `master`; hotfixes from `master`; tags from `master`
 - PRs required, all CI checks green before merge
 
-Required CI flow (dedicated workflows on self-hosted Linux X64 runners, PHP jobs in Docker):
+Required CI flow (dedicated workflows on GitHub-hosted Ubuntu runners, PHP jobs in Docker):
 
 ```text
 validate → lint matrix → test matrix ┐
@@ -186,7 +186,7 @@ validate → lint matrix → test matrix ┐
          SAST                         ┘
 ```
 
-Workflows run on self-hosted Linux X64 runners:
+Workflows run on GitHub-hosted Ubuntu runners:
 
 | Workflow | Purpose |
 | --- | --- |
