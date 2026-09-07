@@ -14,79 +14,21 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 
 > [!WARNING]
 > **`v3.0.0` is a complete ground-up rebuild of this package and is NOT backward compatible with any previous version (`v1.x`, `v2.x`).**
-> Every line was rewritten against a new architecture. There are no legacy shims, no deprecation bridges, and no compatibility code.
-> Upgrading means rewriting your DTO classes against the new API — see [About v3.0.0](#about-v300) and the [changelog](CHANGELOG.md).
+> Rewrite DTO classes for the v3 API before upgrading; there are no legacy shims or deprecation bridges. See the [changelog](CHANGELOG.md).
 
-## About v3.0.0
+## Upgrade highlights
 
-| | |
-| --- | --- |
-| Status | **`v3.2.0` — current release** |
-| First public line | `v3.0.0` (the archived `v1.x` / `v2.x` implementation is a separate codebase lineage, not an ancestor of this one) |
-| Git history | Fresh repository — clean rewrite, old repo untouched in archive |
-| Compatibility | **None with older versions.** Class layout, behavior contracts, exception hierarchy, and engine internals all changed |
-| Runtime dependencies | `psr/http-message` (interface-only) for `fromRequest()`; exceptions are vendorized; PSR-3 logging is optional via Composer `suggest` |
-
-## Highlights vs the previous line
-
-| Area | Previous (`v2.x`) | This rebuild (`v3.0.0`) |
-| --- | --- | --- |
-| Dependencies | `jooservices/exceptions ^1.0` runtime require | Vendorized exceptions; `psr/http-message` for `fromRequest()` |
-| Engine | Per-class static engine store | One process-wide Engine + LRU `ClassMeta` caches + worker `reset()` |
-| `with()` / `clone()` / `merge()` | `toArray()` → `from()` round-trip (dropped `#[Hidden]`, mixed key spaces) | State view through the constructor, property-name keys only, patched values cast, named args supported |
-| Hashing | Order-dependent `serialize(toArray())` | Canonical sorted-key JSON over the state view |
-| Framework coupling | Laravel `config()` inside `#[DefaultFrom]` | Pluggable resolver (env + static method); Laravel adapters fully dropped |
-| HTTP input | — | `fromRequest(ServerRequestInterface)` (PSR-7) |
-| Coding standards | Pint `laravel` preset, partial PSR-12 | Strict PSR-1 / PSR-4 / PSR-12 (PER-CS 3.0), Pint `per` preset |
-| Correctness & security | Known defect register (C1–C19, S1–S6) | All fixed with named regression tests |
+- v3 has a new DTO/Data engine, constructor-first hydration, and explicit key-space rules.
+- `jooservices/exceptions` is no longer a runtime dependency; `psr/http-message` supports `fromRequest()`.
+- `with()`, `merge()`, and `clone()` use property names and rebuild through the constructor.
 
 ## Features
 
-**Core**
-
-- `Dto` (immutable, readonly) and `Data` (mutable counterpart) sharing one base
-- `Context`, `CastMode`, `SerializationOptions`, `Optional`, `PartialDtoBuilder`
-- Lazy derived serialization via `ComputesLazyProperties`
-
-**Factories**
-
-- `from()`, `fromArray()`, `fromJson()`, `fromObject()` — external input hydration
-- `tryFrom()` — non-throwing variant
-- `fromRequest(ServerRequestInterface)` — PSR-7 parsed body + query string
-- `collection()` for lists, `partial()` for partial-payload builders
-
-**Instance helpers**
-
-- `with()` — immutable copy through the constructor; array or named args (`$dto->with(email: $v)`)
-- `merge()`, `mergeRecursive()`, `clone()` / `replicate()`
-- `diff()`, `equals()`, `hash()` — state-view comparisons with canonical hashing
-- `validate()`, `when()` / `unless()`
-
-**Attributes**
-
-- Mapping: `MapFrom`, `MapTo`, `Hidden`, `DefaultFrom`, class-level `DiscriminatorMap`
-- Casting / transforms: `CastWith`, `TransformWith`, `StrictType`, `Pipeline` (constructor-spread step options)
-- Validation: `Required`, `RequiredIf`, `Email`, `Url`, `Regex`, `Length`, `Min`, `Max`, `Between`, `Valid`
-
-**Hydration & casting**
-
-- Arrays, JSON strings, simple objects, PSR-7 requests
-- Input naming strategies (camelCase / snake_case); output-side naming opt-in via Context
-- Global + property pipelines with options; input normalizers
-- Scalar, enum, `DateTimeInterface`, nested DTO, untyped `array` pass-through, PHPDoc typed arrays (`Type[]`, `array<Type>`, `array<K, V>`, `list<Type>` on `@var` or constructor `@param`), native union types in stable documented order
-
-**Validation, normalization, collections**
-
-- Opt-in validation via Context plus standalone instance validation; rule registry extensible via attributes
-- `toArray()` / `toJson()` / `jsonSerialize()`, transformers, lazy properties
-- Serialization filters: `only` / `except` / `maxDepth` / `wrap` / `includeLazy`
-- `DataCollection` (`toArray()` / `jsonSerialize()` / `all()`) and `PaginatedCollection` (duck-typed paginator support)
-
-**Schema, meta, exceptions**
-
-- `JsonSchemaGenerator` and `OpenApiGenerator` emitting self-contained recursive `$ref` graphs
-- Reflection-based metadata: true-LRU memory cache + file cache with content-hash freshness envelope
-- Structured exception hierarchy (hydration / mapping / cast / validation) with path support and payload redaction
+- Immutable `Dto` and mutable `Data` objects with typed, constructor-first hydration.
+- Factories for arrays, JSON, objects, and PSR-7 requests; collection and partial-payload support.
+- Attribute-driven mapping, casting, transforms, validation, and serialization control.
+- Immutable copies, merging, comparison, hashing, and lazy derived properties.
+- JSON Schema and OpenAPI generation, structured exceptions, and cached reflection metadata.
 
 ## Requirements
 
@@ -131,7 +73,7 @@ $updated->toArray();  // ['id' => 'u_123', 'email' => 'other@example.com', ...]
 $updated->toJson();
 ```
 
-## Design contract
+## Design notes
 
 - Every DTO declares a constructor with **public promoted properties**; constructor-less classes are unsupported.
 - Each entry point owns exactly one key space:
@@ -146,8 +88,10 @@ $updated->toJson();
 
 ## Documentation
 
-- [Changelog](CHANGELOG.md) — starts at `v3.0.0`; earlier releases belong to the retired implementation
-- [`AGENTS.md`](AGENTS.md) — contributor/agent working agreement
+- [Changelog](CHANGELOG.md) — version history and upgrade notes
+- [Contributing guide](CONTRIBUTING.md) — setup, quality gates, and pull requests
+- [Development workflows](WORKFLOWS.md) — branches, CI, releases, and repository automation
+- [Security policy](SECURITY.md) — private vulnerability reporting
 
 ## Development
 
@@ -172,43 +116,6 @@ make shell     # interactive container shell
 Every linter runs at **maximum strictness with no ignore lists** — fix issues at the source instead of suppressing them.
 
 IDE setup: Cursor / VS Code — install recommended workspace extensions; format-on-save runs Pint via `tools/pint` (Docker). PHPStorm — inspection profile + Pint file watcher.
-
-## Branch model & CI
-
-- `master` — production; `develop` — integration
-- Feature/fix branches from `develop`, PR back into `develop`; releases via `release/<version>` → `master`; hotfixes from `master`; tags from `master`
-- PRs required, all CI checks green before merge
-
-Required CI flow (dedicated workflows on GitHub-hosted `ubuntu-latest`, PHP jobs in Docker):
-
-```text
-validate → lint matrix → test matrix ┐
-         dependency security          ├→ coverage gate (85%) → Codecov + Sonar
-         secret scan                  │
-         SAST                         ┘
-```
-
-Workflows run on GitHub-hosted `ubuntu-latest` runners:
-
-| Workflow | Purpose |
-| --- | --- |
-| `ci.yml` | PR gate: validate → lint/test matrices + parallel security jobs → 85% coverage → Codecov + Sonar |
-| `ci-post-merge.yml` | Push to `master`/`develop`: validate, tests + coverage → Codecov + Sonar |
-| `commitlint.yml` | Conventional Commits on every PR commit |
-| `codeql.yml` | CodeQL analysis for GitHub Actions workflows |
-| `workflow-audit.yml` | actionlint + zizmor on workflow files |
-| `release.yml` | tag gates, Trivy, SBOM, GitHub Release |
-| `semantic-pr.yml` | Conventional Commits PR title |
-| `pr-labeler.yml` | path labels |
-| `scorecard.yml` | OpenSSF Scorecard |
-| `link-check.yml` | weekly Markdown link check |
-| `stale.yml` | stale issues/PRs |
-
-Also: Dependabot (Composer + GitHub Actions), CODEOWNERS, labeler config. See [WORKFLOWS.md](WORKFLOWS.md).
-
-**CI secrets (organization level):** `CODECOV_TOKEN` and `SONAR_TOKEN` live under [jooservices organization secrets](https://github.com/organizations/jooservices/settings/secrets/actions) — not per-repo. `SONAR_HOST_URL` is optional and defaults to `https://sonarcloud.io`. Grant this repository access when onboarding. PRs to `develop`/`master` run `ci.yml`; pushes to those branches run `ci-post-merge.yml`.
-
-Quality gates: Pint (`per` preset) · PHPCS full `PSR12` · PHPStan max level, zero ignores · PHPMD · PHP-CS-Fixer (PHPDoc-only).
 
 ## Community
 
