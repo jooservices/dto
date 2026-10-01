@@ -26,6 +26,27 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Reject human-authored commits in Dependabot PR
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+            const humanCommits = commits.filter(
+              ({ author }) => author?.login !== 'dependabot[bot]',
+            );
+
+            if (humanCommits.length > 0) {
+              core.setFailed(
+                `Dependabot PR contains ${humanCommits.length} non-Dependabot commit(s).`,
+              );
+            }
+
       - name: Validate PR commits
         uses: wagoid/commitlint-github-action@v6
         with:
