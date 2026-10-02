@@ -6,6 +6,7 @@ namespace JOOservices\Dto\Hydration\Pipeline;
 
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use DOMNode;
 use JOOservices\Dto\Hydration\PipelineStepInterface;
 
@@ -24,6 +25,9 @@ final class StripTags implements PipelineStepInterface
     ) {
     }
 
+    /**
+     * @throws DOMException When an attribute cannot be removed.
+     */
     public function handle(mixed $value): mixed
     {
         if (! is_string($value) || $value === '') {
@@ -38,6 +42,9 @@ final class StripTags implements PipelineStepInterface
         return $this->stripAttributes($stripped);
     }
 
+    /**
+     * @throws DOMException When an attribute cannot be removed.
+     */
     private function stripAttributes(string $html): string
     {
         $document = new DOMDocument();
@@ -66,6 +73,9 @@ final class StripTags implements PipelineStepInterface
         return $out;
     }
 
+    /**
+     * @throws DOMException When an attribute cannot be removed.
+     */
     private function stripAttributesRecursively(DOMNode $node): void
     {
         if ($node instanceof DOMElement) {
