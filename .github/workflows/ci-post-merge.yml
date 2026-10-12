@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -29,7 +29,7 @@ jobs:
         run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: vendor-cache
         with:
           path: vendor
@@ -59,7 +59,7 @@ jobs:
             suite: Integration
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -67,7 +67,7 @@ jobs:
         run: tools/ci/docker-compose build php
 
       - name: Cache Composer vendor
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: vendor-cache
         with:
           path: vendor
@@ -87,7 +87,7 @@ jobs:
             --coverage-clover=build/coverage/clover-${{ matrix.suite }}.xml
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-post-merge-${{ matrix.suite }}
           path: build/coverage/clover-${{ matrix.suite }}.xml
@@ -100,7 +100,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -109,7 +109,7 @@ jobs:
         run: tools/ci/docker-compose build php
 
       - name: Download coverage artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: coverage-post-merge-*
           path: build/coverage/matrix
@@ -126,7 +126,7 @@ jobs:
           ls -la build/coverage
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: build/coverage/clover-combined.xml
@@ -152,7 +152,7 @@ jobs:
           echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload SonarQube analysis
-        uses: SonarSource/sonarqube-scan-action@v8
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}
