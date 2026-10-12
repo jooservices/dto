@@ -161,7 +161,11 @@ gantt
   Git history with the MIT-licensed Gitleaks OSS CLI. GitHub Secret Scanning
   and Push Protection are enabled in the repository security settings; they
   are not controlled by a workflow file.
-- The coverage job uploads the merged report to Codecov and SonarQube. It
-  normalizes a scheme-less `SONAR_HOST_URL` to `https://…` before scanning.
+- Local `make sonar` sends results only to the on-demand Shared Docker SonarQube
+  Community Build container and keeps them in its shared named volumes. Pull-request and
+  post-merge GitHub Actions use the `SONAR_TOKEN` repository secret to send
+  analysis to `https://sonarcloud.io`; local commands never read that secret.
+- The coverage jobs upload merged reports to Codecov and provide them to the
+  Sonar analysis that runs in the same CI workflow.
 - Release is tag-driven, but its `origin/master` ancestry gate prevents a tag
   from publishing a commit that is not on the production branch.

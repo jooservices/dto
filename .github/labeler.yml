@@ -18,9 +18,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - '.github/**/*'
-      - 'captainhook.json'
       - 'Dockerfile'
-      - 'docker-compose.yml'
+      - 'compose.yaml'
+      - 'Makefile'
+      - 'tools/**/*'
+      - '.trivyignore.yaml'
 
 'configuration':
   - changed-files:

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+WORKTREE_GIT_DIR="$(git rev-parse --path-format=absolute --git-dir)"
+COMMON_GIT_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
+
+if [[ "$WORKTREE_GIT_DIR" == "$COMMON_GIT_DIR" ]]; then
+    CONTAINER_GIT_DIR=/git-common
+elif [[ "$WORKTREE_GIT_DIR" == "$COMMON_GIT_DIR"/* ]]; then
+    GIT_DIR_SUFFIX="${WORKTREE_GIT_DIR#"$COMMON_GIT_DIR"}"
+    CONTAINER_GIT_DIR="/git-common${GIT_DIR_SUFFIX}"
+else
+    echo "Could not map this worktree's Git directory into the Semgrep container." >&2
+    exit 1
+fi
+
+exec tools/ci/docker-compose --profile tools run --rm --no-deps \
+    --volume "$COMMON_GIT_DIR:/git-common:ro" \
+    --env "GIT_DIR=$CONTAINER_GIT_DIR" \
+    --env GIT_WORK_TREE=/workspace/project \
+    --env GIT_OPTIONAL_LOCKS=0 \
+    --env GIT_CONFIG_COUNT=1 \
+    --env GIT_CONFIG_KEY_0=safe.directory \
+    --env GIT_CONFIG_VALUE_0=/workspace/project \
+    semgrep scan --config p/php --error /workspace/project

@@ -159,6 +159,24 @@ jobs:
             semgrep/semgrep@sha256:67319956da3dcb58baf5b322899c15458e3963e7018a86aeeb5cd224e69cb77a \
             semgrep scan --config p/php --error
 
+  project-docker-scans:
+    name: Project Docker scans
+    needs: [validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run the local scanner target
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DTO_GITLEAKS_BASE_REF: origin/develop
+        run: make scan
+
   test:
     name: Test (${{ matrix.name }})
     needs: [lint]
@@ -249,31 +267,21 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
-      - name: Resolve SonarQube host URL
+      - name: Build Project Docker Sonar scanner
         if: github.event.pull_request.user.type != 'Bot'
-        id: sonar-config
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          set -euo pipefail
-          host_url="${SONAR_HOST_URL:-https://sonarcloud.io}"
-          host_url="${host_url%/}"
-          case "${host_url}" in
-            http://*|https://*) ;;
-            *) host_url="https://${host_url}" ;;
-          esac
-          if [[ ! "${host_url}" =~ ^https?://[^[:space:]/]+ ]]; then
-            echo "SONAR_HOST_URL must be a valid HTTP(S) URL"
-            exit 1
-          fi
-          echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
+        run: tools/ci/docker-compose --profile tools build sonar-scanner
 
-      - name: Upload SonarQube analysis
+      - name: Run SonarQube analysis in Project Docker
         if: github.event.pull_request.user.type != 'Bot'
-        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}
-        with:
-          args: >
-            -Dsonar.php.coverage.reportPaths=build/coverage/clover-combined.xml
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_PR_KEY: ${{ github.event.pull_request.number }}
+          SONAR_PR_BRANCH: ${{ github.head_ref }}
+          SONAR_PR_BASE: ${{ github.base_ref }}
+        run: |
+          cp build/coverage/clover-combined.xml coverage.xml
+          tools/run-sonar-cloud \
+            "-Dsonar.pullrequest.key=${SONAR_PR_KEY}" \
+            "-Dsonar.pullrequest.branch=${SONAR_PR_BRANCH}" \
+            "-Dsonar.pullrequest.base=${SONAR_PR_BASE}"

@@ -1,0 +1,96 @@
+name: dto
+
+x-scanner-common: &scanner-common
+  profiles: [tools]
+  working_dir: /workspace/project
+  volumes:
+    - .:/workspace/project:ro
+  restart: "no"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jooservices/dto:php85
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+    user: "${DOCKER_UID:-10001}:${DOCKER_GID:-10001}"
+    tty: true
+
+  gitleaks:
+    <<: *scanner-common
+    image: ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+    entrypoint: ["gitleaks"]
+    mem_limit: 512m
+
+  semgrep:
+    <<: *scanner-common
+    image: semgrep/semgrep:1.179.0@sha256:67319956da3dcb58baf5b322899c15458e3963e7018a86aeeb5cd224e69cb77a
+    entrypoint: ["semgrep"]
+    mem_limit: 3g
+
+  osv-scanner:
+    <<: *scanner-common
+    image: ghcr.io/google/osv-scanner:v2.7.0
+    mem_limit: 1g
+
+  trivy:
+    <<: *scanner-common
+    image: aquasec/trivy:0.75.0
+    entrypoint: ["trivy"]
+    environment:
+      TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+      TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db:1
+    volumes:
+      - .:/workspace/project:ro
+      - trivy_cache:/root/.cache/trivy
+    mem_limit: 2g
+
+  actionlint:
+    <<: *scanner-common
+    image: rhysd/actionlint:1.7.12
+    entrypoint: ["actionlint"]
+    mem_limit: 512m
+
+  zizmor:
+    <<: *scanner-common
+    image: ghcr.io/zizmorcore/zizmor:1.30.1
+    entrypoint: ["zizmor"]
+    mem_limit: 1g
+
+  shellcheck:
+    <<: *scanner-common
+    image: koalaman/shellcheck:v0.11.0
+    entrypoint: ["shellcheck"]
+    mem_limit: 512m
+
+  hadolint:
+    <<: *scanner-common
+    image: hadolint/hadolint:v2.12.0
+    entrypoint: ["hadolint"]
+    mem_limit: 256m
+
+  sonar-scanner:
+    profiles: [tools]
+    image: jooservices/dto:sonar-scanner-cli-8.1.0.6389
+    build:
+      context: ./docker/sonar-scanner
+    working_dir: /workspace/project
+    entrypoint: ["/usr/local/bin/dto-sonar-entrypoint"]
+    environment:
+      SONAR_HOST_URL: ${SONAR_HOST_URL:-http://sonarqube:9000}
+      SONAR_TOKEN: ${SONAR_TOKEN:-}
+      SONAR_LOCAL: "${SONAR_LOCAL:-false}"
+      GITHUB_ACTIONS: "${GITHUB_ACTIONS:-false}"
+      SONAR_USER_HOME: /tmp/sonar
+    volumes:
+      - .:/workspace/project:ro
+    restart: "no"
+    mem_limit: 2g
+
+volumes:
+  trivy_cache:

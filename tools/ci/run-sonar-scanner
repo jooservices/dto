@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd -P)"
+cd "$ROOT"
+
+if [[ -z "${SONAR_TOKEN:-}" ]]; then
+    echo "SONAR_TOKEN is required for the selected SonarQube server." >&2
+    exit 1
+fi
+
+if [[ -z "${SONAR_HOST_URL:-}" ]]; then
+    echo "SONAR_HOST_URL is required for the selected SonarQube server." >&2
+    exit 1
+fi
+
+if [[ "${SONAR_LOCAL:-false}" == true ]]; then
+    if [[ "$SONAR_HOST_URL" != http://sonarqube:9000 ]]; then
+        echo "Local Sonar analysis must target the Shared Docker SonarQube service." >&2
+        exit 1
+    fi
+elif [[ "${GITHUB_ACTIONS:-}" != true || "$SONAR_HOST_URL" != https://sonarcloud.io ]]; then
+    echo "SonarCloud analysis is restricted to GitHub Actions." >&2
+    exit 1
+fi
+
+if [[ ! -s coverage.xml ]]; then
+    echo "Sonar scan needs coverage.xml. Run make ci first." >&2
+    exit 1
+fi
+
+COMMON_GIT_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
+COMPOSE_PROFILES=(--profile tools)
+
+if [[ "$COMMON_GIT_DIR" == "$ROOT/.git" ]]; then
+    exec tools/ci/docker-compose "${COMPOSE_PROFILES[@]}" run --rm --no-deps \
+        --workdir "$ROOT" \
+        --volume "$ROOT:$ROOT:ro" \
+        --env GIT_OPTIONAL_LOCKS=0 \
+        --env GIT_CONFIG_COUNT=1 \
+        --env GIT_CONFIG_KEY_0=safe.directory \
+        --env "GIT_CONFIG_VALUE_0=$ROOT" \
+        sonar-scanner "$@"
+fi
+
+exec tools/ci/docker-compose "${COMPOSE_PROFILES[@]}" run --rm --no-deps \
+    --workdir "$ROOT" \
+    --volume "$ROOT:$ROOT:ro" \
+    --volume "$COMMON_GIT_DIR:$COMMON_GIT_DIR:ro" \
+    --env GIT_OPTIONAL_LOCKS=0 \
+    --env GIT_CONFIG_COUNT=1 \
+    --env GIT_CONFIG_KEY_0=safe.directory \
+    --env "GIT_CONFIG_VALUE_0=$ROOT" \
+    sonar-scanner "$@"

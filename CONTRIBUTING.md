@@ -8,25 +8,33 @@ Thank you for considering a contribution to `jooservices/dto`.
 
 ## Requirements
 
-- PHP `>= 8.5`
-- Docker with Docker Compose — **all** PHP tooling runs inside `php:8.5-cli-bookworm`; nothing needs to be installed locally
-- Composer knowledge for day-to-day scripts (executed in the container)
+- Docker with Docker Compose v2, Git, Make, and curl
+- No host PHP, Composer, or security scanner binaries are needed; the project runs its PHP tools and scanners in its own Compose services
+- `JOOSERVICES_DTO_SONAR_LOCAL_TOKEN` in the ignored `Sites/.env` file for the full local gate (`make preflight`); it must be a DTO project analysis token from the shared local SonarQube instance
+- A GitHub CLI login or `GH_TOKEN` environment variable for zizmor's online workflow audits
 
 ## Setup
 
 ```bash
-make build     # build the tooling image
-make install   # composer install inside the container
-make shell     # interactive container shell
+make install          # build PHP + Sonar scanner images and install Composer dependencies in Docker
+make hooks-install    # route Git hooks through the Docker-backed gate
+make shell            # interactive PHP container shell
 ```
 
-CaptainHook git hooks are installed automatically via the Composer `post-install-cmd` / `post-update-cmd` scripts. On machines without host PHP, re-point hooks to Docker after install:
+For first-time local Sonar setup, run `make sonar-up`, open
+<http://localhost:9000>, sign in with `admin` / `admin`, immediately change the
+password, and store it as `JOOSERVICES_SONAR_LOCAL_ADMIN_PASSWORD` in
+`Sites/.env`. Create project key `jooservices_dto`, then create a **Project
+analysis** token. Store it as `JOOSERVICES_DTO_SONAR_LOCAL_TOKEN` in the ignored
+`Sites/.env`. The local
+scanner runs in Project Docker, joins the shared Docker network for the scan,
+and reads only this project token; it never reads the SonarCloud token. GitHub
+Actions uses the repository `SONAR_TOKEN` secret for SonarCloud PR analysis.
+Stop the shared server with `make sonar-stop` when it is no longer needed.
 
-```bash
-tools/install-git-hooks
-```
+The project installs native Git hook scripts. The commit-msg hook validates Conventional Commits, the pre-commit hook runs the complete local gate, and the pre-push hook scans commits against `origin/develop` before running PHPUnit. PHP commands and scanners still run in Project Docker; host Git invokes the hooks. If the base ref is unavailable, the history scan fails; fetch it or set `DTO_GITLEAKS_BASE_REF` to the intended remote base.
 
-**Never bypass hooks with `--no-verify`.**
+Keep hooks enabled; **never bypass them with `--no-verify`**.
 
 ## Git workflow
 
@@ -41,7 +49,7 @@ tools/install-git-hooks
 
 Conventional Commits are enforced in three places:
 
-- locally by CaptainHook (`commit-msg`)
+- locally by the project `commit-msg` hook
 - on every commit in a PR by `commitlint.yml`
 - on PR titles by `semantic-pr.yml` (subject must start with an uppercase letter)
 
@@ -55,7 +63,7 @@ Rules: imperative mood, uppercase first letter of the subject, no trailing perio
 
 ## Quality gates
 
-Run the relevant gates before every push — CI runs the same chain and **every job is required**:
+Run the complete gate before every commit. The scanners run as one-shot Project Docker services against a read-only project mount; the PHP image does not need to contain scanner binaries. `make preflight` fails if a required scanner, image, credential, test, or quality gate is unavailable or reports a blocking finding.
 
 | Command | Purpose |
 | --- | --- |
@@ -66,6 +74,13 @@ Run the relevant gates before every push — CI runs the same chain and **every 
 | `make audit` | Composer audit |
 | `make bench` | phpbench |
 | `make ci` | lint + coverage run (local CI parity) |
+| `make scan` | Gitleaks staged + full history, OSV, Semgrep, Trivy filesystem + PHP image, actionlint, zizmor, ShellCheck, and Hadolint |
+| `make sonar-up` | Start the on-demand Shared Docker SonarQube Community Build service |
+| `make sonar` | Local SonarQube analysis with coverage and a blocking quality-gate result |
+| `make sonar-stop` | Stop the shared SonarQube service while preserving its named volumes |
+| `make preflight` | build + validation + lint + Unit/Integration tests + coverage floor + Composer audit + all scanners + Sonar quality gate |
+
+The PR still has GitHub-side checks that require pull-request metadata or GitHub reporting (for example Dependency Review, CodeQL results, and Codecov upload). Local scans do not replace those required checks; the PR must still pass them.
 
 Coding rules:
 

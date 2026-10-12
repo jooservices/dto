@@ -133,29 +133,12 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
-      - name: Resolve SonarQube host URL
-        id: sonar-config
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          set -euo pipefail
-          host_url="${SONAR_HOST_URL:-https://sonarcloud.io}"
-          host_url="${host_url%/}"
-          case "${host_url}" in
-            http://*|https://*) ;;
-            *) host_url="https://${host_url}" ;;
-          esac
-          if [[ ! "${host_url}" =~ ^https?://[^[:space:]/]+ ]]; then
-            echo "SONAR_HOST_URL must be a valid HTTP(S) URL"
-            exit 1
-          fi
-          echo "host_url=${host_url}" >> "${GITHUB_OUTPUT}"
-
       - name: Upload SonarQube analysis
         uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ steps.sonar-config.outputs.host_url }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
+            -Dsonar.organization=jooservices
             -Dsonar.php.coverage.reportPaths=build/coverage/clover-combined.xml

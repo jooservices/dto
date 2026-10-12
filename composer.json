@@ -32,8 +32,6 @@
         "psr/log": "Enables debug logging during DTO hydration via Engine constructor injection."
     },
     "require-dev": {
-        "captainhook/captainhook": "^5.23",
-        "captainhook/plugin-composer": "^5.3",
         "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.65",
         "laravel/pint": "^1.18",
@@ -86,15 +84,10 @@
             "@lint",
             "@test:coverage",
             "@coverage:check"
-        ],
-        "post-install-cmd": "captainhook install --force --skip-existing",
-        "post-update-cmd": "captainhook install --force --skip-existing"
+        ]
     },
     "config": {
         "sort-packages": true,
-        "allow-plugins": {
-            "captainhook/plugin-composer": true
-        },
         "audit": {
             "abandoned": "ignore"
         }

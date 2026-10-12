@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+GH_TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+if [[ -z "$GH_TOKEN" ]] && command -v gh >/dev/null 2>&1; then
+    GH_TOKEN="$(gh auth token 2>/dev/null)" || GH_TOKEN=""
+fi
+
+if [[ -z "$GH_TOKEN" ]]; then
+    echo "Online zizmor audits require GH_TOKEN or an authenticated GitHub CLI (gh auth login)." >&2
+    exit 1
+fi
+
+export GH_TOKEN
+exec tools/ci/docker-compose --profile tools run --rm --no-deps \
+    --env GH_TOKEN \
+    zizmor /workspace/project/.github/workflows

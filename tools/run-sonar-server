@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
+SITES_ROOT=""
+candidate="$ROOT"
+while :; do
+    if [[ -f "$candidate/JOOservices/PROJECTS.md" && -f "$candidate/.agents/namespaces/JOOservices/AGENTS.md" ]]; then
+        SITES_ROOT="$candidate"
+        break
+    fi
+    [[ "$candidate" != / ]] || break
+    candidate="$(dirname "$candidate")"
+done
+
+if [[ -z "$SITES_ROOT" ]]; then
+    echo "Could not find the Sites workspace root." >&2
+    exit 1
+fi
+
+exec "$SITES_ROOT/JOOservices/docker/sonar" "$@"

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+IMAGE_NAME="${DTO_PHP_IMAGE:-jooservices/dto:php85}"
+TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/dto-trivy.XXXXXX")"
+IMAGE_ARCHIVE="$TEMP_DIR/dto-php-image.tar"
+cleanup() {
+    rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
+
+docker image inspect "$IMAGE_NAME" >/dev/null
+docker image save --output "$IMAGE_ARCHIVE" "$IMAGE_NAME"
+
+tools/ci/docker-compose --profile tools run --rm --no-deps \
+    --volume "$IMAGE_ARCHIVE:/tmp/dto-php-image.tar:ro" \
+    trivy image \
+        --input /tmp/dto-php-image.tar \
+        --scanners vuln,secret \
+        --severity CRITICAL,HIGH \
+        --ignorefile /workspace/project/.trivyignore.yaml \
+        --show-suppressed \
+        --exit-code 1
