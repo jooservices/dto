@@ -1,0 +1,242 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TEST_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/dto-git-hooks.XXXXXX")"
+COMMIT_MSG="$REPO_ROOT/tools/hooks/commit-msg"
+FAILED=0
+
+trap 'rm -rf "$TEST_ROOT"' EXIT
+
+# Git exports the parent repository context to hooks. Clear it before creating
+# fixture repositories so `git -C` operates on each fixture rather than the
+# DTO worktree that launched this test.
+while IFS= read -r git_environment_variable; do
+    unset "$git_environment_variable"
+done < <(git rev-parse --local-env-vars)
+
+export GIT_CONFIG_NOSYSTEM=1
+export GIT_CONFIG_GLOBAL="$TEST_ROOT/global.gitconfig"
+
+fail() {
+    printf 'FAIL: %s\n' "$1" >&2
+    FAILED=1
+}
+
+pass() {
+    printf 'PASS: %s\n' "$1"
+}
+
+new_repo() {
+    local name="$1"
+    local repo="$TEST_ROOT/$name"
+
+    mkdir -p "$repo/tools/hooks"
+    cp "$REPO_ROOT/tools/install-git-hooks" "$repo/tools/install-git-hooks"
+    cp "$REPO_ROOT/tools/hooks/"* "$repo/tools/hooks/"
+    git -C "$repo" init --quiet
+
+    printf '%s\n' "$repo"
+}
+
+run_installer() {
+    local repo="$1"
+
+    (cd "$repo" && tools/install-git-hooks)
+}
+
+expect_installer_failure() {
+    local repo="$1"
+    local expected="$2"
+    local output
+
+    if output="$(run_installer "$repo" 2>&1)"; then
+        fail "installer unexpectedly succeeded for $expected"
+    elif [[ "$output" != *"$expected"* ]]; then
+        fail "installer failure did not mention '$expected': $output"
+    fi
+}
+
+test_idempotent_install() {
+    local repo hooks_dir hook
+
+    repo="$(new_repo idempotent)"
+    run_installer "$repo" >/dev/null
+    hooks_dir="$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)"
+
+    for hook in commit-msg pre-commit pre-push; do
+        cp "$hooks_dir/$hook" "$TEST_ROOT/$hook.before"
+    done
+
+    run_installer "$repo" >/dev/null
+
+    for hook in commit-msg pre-commit pre-push; do
+        if cmp -s "$TEST_ROOT/$hook.before" "$hooks_dir/$hook"; then
+            pass "idempotent install preserves $hook"
+        else
+            fail "idempotent install changed $hook"
+        fi
+    done
+
+    if [[ "$(git -C "$repo" config --worktree --get core.hooksPath)" == "$hooks_dir" \
+        && "$(git -C "$repo" config --local --get extensions.worktreeConfig)" == true ]]; then
+        pass "idempotent install retains one worktree hooks configuration"
+    else
+        fail "idempotent install produced an unexpected hooks configuration"
+    fi
+}
+
+test_external_hooks_path_refusal() {
+    local repo external hooks_dir
+
+    repo="$(new_repo external-hooks-path)"
+    external="$TEST_ROOT/external-hooks"
+    mkdir -p "$external"
+    printf 'external hook directory sentinel\n' > "$external/sentinel"
+    cp "$external/sentinel" "$TEST_ROOT/external-sentinel.before"
+    git -C "$repo" config --local core.hooksPath "$external"
+    cp "$repo/.git/config" "$TEST_ROOT/external-config.before"
+
+    expect_installer_failure "$repo" "Refusing to replace configured core.hooksPath"
+
+    hooks_dir="$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)"
+    if cmp -s "$TEST_ROOT/external-config.before" "$repo/.git/config" \
+        && [[ ! -e "$repo/.git/config.worktree" ]] \
+        && [[ ! -e "$hooks_dir/commit-msg" ]] \
+        && cmp -s "$TEST_ROOT/external-sentinel.before" "$external/sentinel"; then
+        pass "external core.hooksPath refusal leaves configuration and hooks untouched"
+    else
+        fail "external core.hooksPath refusal mutated Git configuration or hooks"
+    fi
+}
+
+test_unknown_hook_refusal() {
+    local repo hooks_dir custom_hook
+
+    repo="$(new_repo unknown-hook)"
+    hooks_dir="$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)"
+    custom_hook="$hooks_dir/pre-commit"
+    printf '#!/usr/bin/env bash\nprintf "user hook\\n"\n' > "$custom_hook"
+    chmod +x "$custom_hook"
+    cp "$repo/.git/config" "$TEST_ROOT/unknown-config.before"
+    cp "$custom_hook" "$TEST_ROOT/unknown-hook.before"
+
+    expect_installer_failure "$repo" "Refusing to replace existing non-DTO Git hook"
+
+    if cmp -s "$TEST_ROOT/unknown-config.before" "$repo/.git/config" \
+        && cmp -s "$TEST_ROOT/unknown-hook.before" "$custom_hook" \
+        && [[ -x "$custom_hook" ]] \
+        && [[ ! -e "$repo/.git/config.worktree" ]]; then
+        pass "unknown same-name hook refusal leaves configuration and hook untouched"
+    else
+        fail "unknown same-name hook refusal mutated Git configuration or hook"
+    fi
+}
+
+test_unrelated_hook_preservation() {
+    local repo hooks_dir unrelated_hook
+
+    repo="$(new_repo unrelated-hook)"
+    hooks_dir="$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)"
+    unrelated_hook="$hooks_dir/post-checkout"
+    printf '#!/usr/bin/env bash\nprintf "unrelated hook\\n"\n' > "$unrelated_hook"
+    chmod +x "$unrelated_hook"
+    cp "$unrelated_hook" "$TEST_ROOT/unrelated-hook.before"
+
+    run_installer "$repo" >/dev/null
+
+    if cmp -s "$TEST_ROOT/unrelated-hook.before" "$unrelated_hook" && [[ -x "$unrelated_hook" ]]; then
+        pass "install preserves unrelated hooks"
+    else
+        fail "install changed or removed an unrelated hook"
+    fi
+}
+
+test_recognized_captainhook_cleanup() {
+    local repo hooks_dir
+
+    repo="$(new_repo captainhook-cleanup)"
+    hooks_dir="$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)"
+    cat > "$hooks_dir/commit-msg" <<'HOOK'
+#!/usr/bin/env bash
+# installed by CaptainHook
+set -euo pipefail
+exec php tools/run-captainhook commit-msg "$@"
+HOOK
+    cat > "$hooks_dir/post-merge" <<'HOOK'
+#!/usr/bin/env bash
+# installed by CaptainHook
+exec php tools/run-captainhook post-merge "$@"
+HOOK
+    cat > "$hooks_dir/post-checkout" <<'HOOK'
+#!/usr/bin/env bash
+# installed by CaptainHook
+exec php tools/custom-checkout "$@"
+HOOK
+    cat > "$hooks_dir/post-commit" <<'HOOK'
+#!/usr/bin/env bash
+exec php tools/run-captainhook post-commit "$@"
+HOOK
+    chmod +x "$hooks_dir/commit-msg" "$hooks_dir/post-merge" \
+        "$hooks_dir/post-checkout" "$hooks_dir/post-commit"
+    cp "$hooks_dir/post-checkout" "$TEST_ROOT/captainhook-lookalike.before"
+    cp "$hooks_dir/post-commit" "$TEST_ROOT/captainhook-runner-only.before"
+
+    run_installer "$repo" >/dev/null
+
+    if [[ ! -e "$hooks_dir/post-merge" ]] \
+        && grep -Fq '# installed by DTO project Docker quality gates' "$hooks_dir/commit-msg" \
+        && ! grep -Fq 'tools/run-captainhook' "$hooks_dir/commit-msg" \
+        && cmp -s "$TEST_ROOT/captainhook-lookalike.before" "$hooks_dir/post-checkout" \
+        && cmp -s "$TEST_ROOT/captainhook-runner-only.before" "$hooks_dir/post-commit"; then
+        pass "install replaces and removes only recognized CaptainHook hooks"
+    else
+        fail "install did not limit CaptainHook cleanup to recognized hooks"
+    fi
+}
+
+assert_header_accepted() {
+    local header="$1"
+    local message_file="$TEST_ROOT/commit-message"
+
+    printf '%s\n' "$header" > "$message_file"
+    if "$COMMIT_MSG" "$message_file" >/dev/null 2>&1; then
+        pass "commit header accepted: $header"
+    else
+        fail "valid commit header rejected: $header"
+    fi
+}
+
+assert_header_rejected() {
+    local header="$1"
+    local message_file="$TEST_ROOT/commit-message"
+
+    printf '%s\n' "$header" > "$message_file"
+    if "$COMMIT_MSG" "$message_file" >/dev/null 2>&1; then
+        fail "invalid commit header accepted: $header"
+    else
+        pass "commit header rejected: $header"
+    fi
+}
+
+test_commit_headers() {
+    assert_header_accepted 'JDTO-4: fix: Preserve existing hooks'
+    assert_header_accepted 'JDTO-4: feat(hydration): Support named arguments in with()'
+    assert_header_rejected 'fix(docker): Preserve existing hooks'
+    assert_header_rejected 'JDTO-4: fix: preserve existing hooks'
+    assert_header_rejected 'JDTO-4: update: Preserve existing hooks'
+    assert_header_rejected 'JDTO-4: fix: Preserve existing hooks.'
+}
+
+test_idempotent_install
+test_external_hooks_path_refusal
+test_unknown_hook_refusal
+test_unrelated_hook_preservation
+test_recognized_captainhook_cleanup
+test_commit_headers
+
+if [[ "$FAILED" -ne 0 ]]; then
+    exit 1
+fi
+
+printf 'All isolated Git hook regression tests passed.\n'

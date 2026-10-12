@@ -47,16 +47,18 @@ Keep hooks enabled; **never bypass them with `--no-verify`**.
 
 ## Commit convention
 
-Conventional Commits are enforced in three places:
+Commit headers must start with the Jira issue key and follow Conventional
+Commits. The project `commit-msg` hook enforces this locally, and
+`commitlint.yml` checks every commit in a PR. Both reject headers without a
+Jira key.
 
-- locally by the project `commit-msg` hook
-- on every commit in a PR by `commitlint.yml`
-- on PR titles by `semantic-pr.yml` (subject must start with an uppercase letter)
+The separate PR-title check is enforced by `semantic-pr.yml` (subject must
+start with an uppercase letter).
 
 ```text
-feat(hydration): support named arguments in with()
-fix(casting): reject INF and NaN in float caster
-docs(readme): document key-space rules
+JDTO-4: feat(hydration): Support named arguments in with()
+JDTO-4: fix(casting): Reject INF and NaN in float caster
+JDTO-4: docs(readme): Document key-space rules
 ```
 
 Rules: imperative mood, uppercase first letter of the subject, no trailing period.
@@ -74,7 +76,7 @@ Run the complete gate before every commit. The scanners run as one-shot Project 
 | `make audit` | Composer audit |
 | `make bench` | phpbench |
 | `make ci` | lint + coverage run (local CI parity) |
-| `make scan` | Gitleaks staged + full history, OSV, Semgrep, Trivy filesystem + PHP image, actionlint, zizmor, ShellCheck, and Hadolint |
+| `make scan` | Isolated Git hook and commit-header regression tests, Gitleaks staged + full history, OSV, Semgrep, Trivy filesystem + PHP image, actionlint, zizmor, ShellCheck, and Hadolint |
 | `make sonar-up` | Start the on-demand Shared Docker SonarQube Community Build service |
 | `make sonar` | Local SonarQube analysis with coverage and a blocking quality-gate result |
 | `make sonar-stop` | Stop the shared SonarQube service while preserving its named volumes |

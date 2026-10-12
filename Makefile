@@ -1,4 +1,4 @@
-.PHONY: build install hooks-install shell validate lint test test-coverage ci audit bench \
+.PHONY: build install hooks-install shell validate lint test test-hooks test-coverage ci audit bench \
 	scan scan-secrets scan-dependencies scan-sast scan-config scan-workflows scan-image sonar sonar-up sonar-stop preflight
 
 DOCKER_COMPOSE ?= tools/ci/docker-compose
@@ -26,6 +26,9 @@ lint:
 test:
 	$(PHP) composer test
 
+test-hooks:
+	tools/test-install-git-hooks
+
 test-coverage:
 	$(PHP) composer test:coverage
 
@@ -48,7 +51,7 @@ scan-dependencies:
 scan-sast:
 	tools/run-semgrep
 
-scan-config:
+scan-config: test-hooks
 	$(TOOLS) shellcheck -x \
 		/workspace/project/tools/ci/docker-compose \
 		/workspace/project/tools/install-git-hooks \
@@ -65,6 +68,7 @@ scan-config:
 		/workspace/project/tools/hooks/commit-msg \
 		/workspace/project/tools/hooks/pre-commit \
 		/workspace/project/tools/hooks/pre-push \
+		/workspace/project/tools/test-install-git-hooks \
 		/workspace/project/tools/run-semgrep \
 		/workspace/project/tools/run-sonar \
 		/workspace/project/tools/run-sonar-server \

@@ -7,10 +7,10 @@ if [[ $# -ne 1 || ! -f "$1" ]]; then
 fi
 
 SUBJECT="$(head -n 1 "$1")"
-PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?!?: [A-Z].+$'
+PATTERN='^[A-Z][A-Z0-9]+-[0-9]+: (feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?!?: [A-Z].+$'
 
 if (( ${#SUBJECT} < 10 || ${#SUBJECT} > 120 )) || [[ ! "$SUBJECT" =~ $PATTERN || "$SUBJECT" == *. ]]; then
-    echo "Commit header must follow Conventional Commits, use an uppercase subject, be 10–120 characters, and have no trailing period." >&2
-    echo "Example: chore: Add Docker quality gates" >&2
+    echo "Commit header must start with a Jira issue key, follow Conventional Commits, use an uppercase subject, be 10–120 characters, and have no trailing period." >&2
+    echo "Example: JDTO-4: fix: Preserve existing hooks" >&2
     exit 1
 fi

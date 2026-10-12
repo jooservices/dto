@@ -1,6 +1,12 @@
 /** @type {import('@commitlint/types').UserConfig} */
 export default {
     defaultIgnores: true,
+    parserPreset: {
+        parserOpts: {
+            headerPattern: /^([A-Z][A-Z0-9]+-[0-9]+): ([a-z]+)(?:\((.*)\))?(!)?: (.+)$/,
+            headerCorrespondence: ['ticket', 'type', 'scope', 'breaking', 'subject'],
+        },
+    },
     // CI sets this only from the trusted pull request author context.
     ignores: [
         (message) =>
