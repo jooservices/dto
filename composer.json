@@ -38,7 +38,7 @@
         "friendsofphp/php-cs-fixer": "^3.65",
         "laravel/pint": "^1.18",
         "phpbench/phpbench": "^1.6",
-        "phpmd/phpmd": "^2.15",
+        "phpmd/phpmd": "^3.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
@@ -66,7 +66,7 @@
         "lint:cs:fix": "php-cs-fixer fix --config=.php-cs-fixer.dist.php --sequential",
         "lint:phpcs": "phpcs --standard=phpcs.xml",
         "lint:phpstan": "XDEBUG_MODE=off phpstan analyse --configuration=phpstan.neon --memory-limit=512M",
-        "lint:phpmd": "php -d error_reporting=6143 vendor/bin/phpmd src text phpmd.xml",
+        "lint:phpmd": "vendor/bin/phpmd analyze src --format text --ruleset phpmd.xml",
         "lint": [
             "@lint:pint",
             "@lint:phpcs",

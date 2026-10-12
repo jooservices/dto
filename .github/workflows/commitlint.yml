@@ -21,14 +21,14 @@ jobs:
       DEPENDABOT_PR: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Reject human-authored commits in Dependabot PR
         if: github.event.pull_request.user.login == 'dependabot[bot]'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const commits = await github.paginate(github.rest.pulls.listCommits, {
@@ -48,6 +48,6 @@ jobs:
             }
 
       - name: Validate PR commits
-        uses: wagoid/commitlint-github-action@v6
+        uses: wagoid/commitlint-github-action@b948419dd99f3fd78a6548d48f94e3df7f6bf3ed # v6.2.1
         with:
           configFile: .github/commitlint.config.mjs
