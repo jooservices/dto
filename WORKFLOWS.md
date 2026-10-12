@@ -55,13 +55,10 @@ flowchart TD
     CI --> V[Validate]
     V --> L[Lint matrix]
     L --> T[Test matrix]
-    V --> DS[Dependency security]
-    V --> SS[Secret scan]
-    V --> SA[SAST]
+    L --> S[Security matrix]
+    V --> PDS[Project Docker scans]
     T --> CU[Coverage gate and uploads]
-    DS --> CU
-    SS --> CU
-    SA --> CU
+    S --> CU
 ```
 
 The CI and PR-policy workflows are independent: a label or title check does
@@ -74,13 +71,12 @@ Concurrent runs for the same Git ref cancel older in-progress runs.
 
 ```mermaid
 flowchart LR
-    V[Validate] --> L[Lint matrix] --> T[Test matrix] --> C[Coverage upload]
-    V --> D[Dependency security]
-    V --> S[Secret scan]
-    V --> A[SAST]
-    D --> C
+    V[Validate] --> L[Lint matrix]
+    L --> T[Test matrix]
+    L --> S[Security matrix]
+    V --> PDS[Project Docker scans]
+    T --> C[Coverage upload]
     S --> C
-    A --> C
 
     V --- V1[Checkout, build PHP image]
     V --- V2[Restore/install Composer dependencies]
@@ -89,13 +85,20 @@ flowchart LR
     L --- L1[Pint, PHPCS, PHPStan, PHPMD, PHP-CS-Fixer]
     T --- T1[Unit suite + coverage artifact]
     T --- T2[Integration suite + coverage artifact]
-    D --- D1[Composer audit + OSV Scanner + PR Dependency Review]
-    S --- S1[Gitleaks OSS CLI in pinned Docker image]
-    A --- A1[Semgrep OSS]
+    S --- S1[Dependencies: Composer audit + OSV Scanner + PR Dependency Review]
+    S --- S2[Secrets: Gitleaks OSS CLI in pinned Docker image]
+    S --- S3[SAST: Semgrep OSS]
+    PDS --- PDS1[make scan in Project Docker]
     C --- C1[Download coverage artifact]
     C --- C2[Enforce 85% per-suite floor and merge reports]
     C --- C3[Upload to Codecov and SonarQube]
 ```
+
+`Project Docker scans` depends on `Validate` and runs independently of the
+lint, test, security, and coverage jobs. `Lint` depends on `Validate`; the test
+and security matrices depend on `Lint`; coverage depends on both the test and
+security matrices. The `make scan` job runs the project's Docker-backed local
+scanner target on the full PR history.
 
 ## CI post-merge (`ci-post-merge.yml`)
 

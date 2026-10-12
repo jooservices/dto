@@ -32,7 +32,7 @@ and reads only this project token; it never reads the SonarCloud token. GitHub
 Actions uses the repository `SONAR_TOKEN` secret for SonarCloud PR analysis.
 Stop the shared server with `make sonar-stop` when it is no longer needed.
 
-The project installs native Git hook scripts. The commit-msg hook validates Conventional Commits, the pre-commit hook runs the complete local gate, and the pre-push hook scans commits against `origin/develop` before running PHPUnit. PHP commands and scanners still run in Project Docker; host Git invokes the hooks. If the base ref is unavailable, the history scan fails; fetch it or set `DTO_GITLEAKS_BASE_REF` to the intended remote base.
+The project installs native Git hook scripts. The commit-msg hook validates Conventional Commits, the pre-commit hook runs the complete local gate, and the pre-push hook scans commits against `origin/develop` before running PHPUnit. PHP commands and scanners still run in Project Docker; host Git invokes the hooks. If the base ref is unavailable, the history scan fails; fetch it or set `DTO_GITLEAKS_BASE_REF` to the intended remote base. The installer refuses to replace a different configured `core.hooksPath` or an existing same-name hook it does not own; preserve or chain that hook's behavior before retrying.
 
 Keep hooks enabled; **never bypass them with `--no-verify`**.
 
@@ -80,7 +80,7 @@ Run the complete gate before every commit. The scanners run as one-shot Project 
 | `make sonar-stop` | Stop the shared SonarQube service while preserving its named volumes |
 | `make preflight` | build + validation + lint + Unit/Integration tests + coverage floor + Composer audit + all scanners + Sonar quality gate |
 
-The PR still has GitHub-side checks that require pull-request metadata or GitHub reporting (for example Dependency Review, CodeQL results, and Codecov upload). Local scans do not replace those required checks; the PR must still pass them.
+The `Project Docker scans` job runs `make scan` after `Validate`, independently of the lint, test, security, and coverage jobs. Within CI, `Lint` follows `Validate`; the test and security matrices follow `Lint`; `Coverage upload` follows both test and security. See [WORKFLOWS.md](WORKFLOWS.md#pull-request-flow) for the current job graph. Other PR workflows provide checks such as Dependency Review, CodeQL, commit-message and PR-title validation, and path labels. Local scans do not replace GitHub-side checks or reporting; the PR must pass every check configured for the repository.
 
 Coding rules:
 
@@ -107,7 +107,7 @@ Also:
 
 - target `develop`
 - keep the diff focused — no debug code, warnings, notices, or drive-by file churn
-- make sure every required CI check is green (validate → lint/test matrices and parallel security jobs → coverage upload)
+- make sure every required CI check is green, including `Project Docker scans` and the GitHub-side PR workflows
 
 ## Reporting issues
 
