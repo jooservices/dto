@@ -1,0 +1,518 @@
+# Exact temporary exceptions for findings present in both official PHP base architectures.
+# Base image index: php:8.5-cli-trixie@sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3
+# Reviewed 2026-10-12; every entry expires 2027-01-10 and must be revalidated on base refresh.
+vulnerabilities:
+  - id: "CVE-2013-7445"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2019-19449"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2019-19814"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2021-3847"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2021-3864"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2024-21803"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2024-58015"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-38137"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-38187"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-38204"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-38421"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-38636"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-39859"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-39862"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-39958"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-40025"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-68174"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-68735"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2025-69720"
+    purls:
+      - "pkg:deb/debian/libtinfo6@6.5%2B20250216-2?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libtinfo6@6.5%2B20250216-2?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/ncurses-base@6.5%2B20250216-2?arch=all&distro=debian-13.7"
+      - "pkg:deb/debian/ncurses-bin@6.5%2B20250216-2?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/ncurses-bin@6.5%2B20250216-2?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-12064"
+    purls:
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-16742"
+    purls:
+      - "pkg:deb/debian/libsystemd0@257.13-1~deb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libsystemd0@257.13-1~deb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libudev1@257.13-1~deb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libudev1@257.13-1~deb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-23102"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-23208"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-23327"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-31493"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-31536"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-31568"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-43185"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-43263"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-46130"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-46181"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-46279"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-52991"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53000"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53091"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53109"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53118"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53277"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-53330"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-54369"
+    purls:
+      - "pkg:deb/debian/libacl1@2.3.2-2%2Bb1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libacl1@2.3.2-2%2Bb1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-63879"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-64283"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-6653"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-68409"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-68426"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-68470"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-72042"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-72098"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-72463"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-74269"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-74520"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-74752"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-74860"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-76642"
+    purls:
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-78408"
+    purls:
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-78409"
+    purls:
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-78410"
+    purls:
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/bsdutils@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libblkid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/liblastlog2-2@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libmount1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libsmartcols1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libuuid1@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/login@4.16.0-2%2Breally2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7&epoch=1"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/mount@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/util-linux@2.41.5-0%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-8286"
+    purls:
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-8458"
+    purls:
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86138"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86139"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86140"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86142"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86143"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-86144"
+    purls:
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-88647"
+    purls:
+      - "pkg:deb/debian/libgnutls30t64@3.8.9-3%2Bdeb13u4?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libgnutls30t64@3.8.9-3%2Bdeb13u4?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-88648"
+    purls:
+      - "pkg:deb/debian/libgnutls30t64@3.8.9-3%2Bdeb13u4?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libgnutls30t64@3.8.9-3%2Bdeb13u4?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-8927"
+    purls:
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/curl@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/libcurl4t64@8.14.1-2%2Bdeb13u5?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89631"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89633"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89638"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89675"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89811"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-89972"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-90111"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-90315"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-9538"
+    purls:
+      - "pkg:deb/debian/perl-base@5.40.1-6%2Bdeb13u1?arch=amd64&distro=debian-13.7"
+      - "pkg:deb/debian/perl-base@5.40.1-6%2Bdeb13u1?arch=arm64&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-97528"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-98222"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-98320"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-98323"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-98364"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."
+  - id: "CVE-2026-98378"
+    purls:
+      - "pkg:deb/debian/linux-libc-dev@6.12.111-1?arch=all&distro=debian-13.7"
+    expired_at: 2027-01-10
+    statement: "Present in the official PHP base image index sha256:01a109229f4465bc9ef042d9198f09a4d9da7775a825dbd8572dcdbd8756c4d3 on amd64 and arm64; Trivy reports no fixed Debian Trixie version. Recheck after the base image refresh."

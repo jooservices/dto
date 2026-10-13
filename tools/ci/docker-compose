@@ -2,7 +2,19 @@
 # Run docker compose as the host user (avoids root-owned vendor/ when Docker creates files).
 set -euo pipefail
 
+PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd -P)"
+cd "$PROJECT_ROOT"
+
 export DOCKER_UID="${DOCKER_UID:-$(id -u)}"
 export DOCKER_GID="${DOCKER_GID:-$(id -g)}"
 
-exec docker compose "$@"
+compose_files=(--file "$PROJECT_ROOT/compose.yaml")
+if [[ "${SONAR_LOCAL:-false}" == true ]]; then
+    compose_files+=(--file "$PROJECT_ROOT/compose.sonar-local.yaml")
+fi
+
+if [[ -f "$PROJECT_ROOT/.env" ]]; then
+    exec docker compose --env-file "$PROJECT_ROOT/.env" "${compose_files[@]}" "$@"
+fi
+
+exec docker compose "${compose_files[@]}" "$@"

@@ -1,0 +1,10 @@
+services:
+  sonar-scanner:
+    networks:
+      - default
+      - jooservices-shared
+
+networks:
+  jooservices-shared:
+    external: true
+    name: jooservices-shared

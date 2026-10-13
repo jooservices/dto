@@ -35,7 +35,7 @@ A PHP 8.5+ attribute-driven DTO and Data library: immutable `Dto` and mutable `D
 - PHP `>= 8.5`
 - Extensions: `dom`, `libxml`
 - `psr/http-message` (`fromRequest()`), optional: `psr/log` (Engine debug logging)
-- Docker (recommended — all local tooling runs in `php:8.5-cli-bookworm`)
+- Docker with Docker Compose v2 (required for local development and quality gates)
 
 ## Installation
 
@@ -95,13 +95,53 @@ $updated->toJson();
 
 ## Development
 
-All PHP tooling runs inside Docker (`php:8.5-cli-bookworm` via Docker Compose).
+PHP tooling runs inside the DTO Project Docker image (`php:8.5-cli-trixie`).
+Local security, workflow, and Dockerfile scanners run in separate one-shot
+Project Docker services. SonarQube Community Build runs on demand in JOOservices
+Shared Docker; the scanner remains in Project Docker. No host PHP, Composer,
+Gitleaks, or scanner installation is required.
 
 ```bash
-make build     # build the tooling image
-make install   # composer install in the container
-make shell     # interactive container shell
+make install          # build PHP + Sonar scanner images and install dependencies in Docker
+make hooks-install    # install Docker-backed Git hooks
+make shell            # interactive PHP container shell
 ```
+
+### Local SonarQube setup
+
+The local pre-scan sends analysis only to the shared SonarQube Community Build
+service. Its server and persistent data live in Shared Docker, while the scanner
+runs in the DTO Project Docker image and joins the `jooservices-shared` network
+for that scan. Local analysis never reads the SonarCloud token and never uploads
+to SonarQube Cloud. The shared server is opt-in and binds only to loopback.
+
+On first use, start the server:
+
+```bash
+make sonar-up
+```
+
+Open <http://localhost:9000>. On first use, sign in with `admin` / `admin`,
+immediately change the password, and save it under
+`JOOSERVICES_SONAR_LOCAL_ADMIN_PASSWORD` in `Sites/.env`. Create a project with
+key `jooservices_dto`, then generate a **Project analysis**
+token for that project. Store the project token as
+`JOOSERVICES_DTO_SONAR_LOCAL_TOKEN` in the ignored `Sites/.env` file:
+
+```dotenv
+JOOSERVICES_DTO_SONAR_LOCAL_TOKEN=<local-project-analysis-token>
+```
+
+Do not use the SonarCloud token for this key. `make sonar` starts the shared
+server if it is stopped, waits for it to become ready, runs coverage analysis,
+and fails when the local Quality Gate fails. Use `make sonar-stop` to stop the
+shared server while preserving its named volumes. Other JOOservices projects can
+use this server with their own analysis token under
+`JOOSERVICES_<PROJECT>_SONAR_LOCAL_TOKEN` in `Sites/.env`.
+
+GitHub Actions uses the repository `SONAR_TOKEN` secret for SonarCloud PR
+analysis. That Cloud upload is confined to CI. The optional shared SonarQube
+service reserves up to 4 GB RAM and keeps project data in named volumes.
 
 | Command | Purpose |
 | --- | --- |
@@ -112,8 +152,15 @@ make shell     # interactive container shell
 | `make audit` | Composer audit |
 | `make bench` | phpbench |
 | `make ci` | lint + coverage run (local CI parity) |
+| `make scan` | Gitleaks, OSV, Semgrep, Trivy, actionlint, zizmor, ShellCheck, and Hadolint in Project Docker |
+| `make sonar-up` | Start the shared local SonarQube Community Build server |
+| `make sonar` | Local SonarQube analysis and blocking quality-gate result; requires `JOOSERVICES_DTO_SONAR_LOCAL_TOKEN` in `Sites/.env` |
+| `make sonar-stop` | Stop the shared SonarQube server without deleting its data |
+| `make preflight` | Full local quality gate before commit |
 
 Every linter runs at **maximum strictness with no ignore lists** — fix issues at the source instead of suppressing them.
+
+Git hooks run `make preflight` before commits and scan pushed history against `origin/develop` before pushes. They fail closed when Docker tools, the local Sonar token, the GitHub token for online zizmor audits, or the base ref is missing, or when a blocking finding is reported. GitHub-side checks that need pull-request metadata or upload results still run on the PR.
 
 IDE setup: Cursor / VS Code — install recommended workspace extensions; format-on-save runs Pint via `tools/pint` (Docker). PHPStorm — inspection profile + Pint file watcher.
 

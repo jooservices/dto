@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+usage() {
+    echo "Usage: tools/run-gitleaks {staged|history|history-range RANGE}" >&2
+    exit 2
+}
+
+[[ $# -ge 1 ]] || usage
+MODE="$1"
+shift
+
+WORKTREE_GIT_DIR="$(git rev-parse --path-format=absolute --git-dir)"
+COMMON_GIT_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
+
+if [[ "$WORKTREE_GIT_DIR" == "$COMMON_GIT_DIR" ]]; then
+    CONTAINER_GIT_DIR=/git-common
+elif [[ "$WORKTREE_GIT_DIR" == "$COMMON_GIT_DIR"/* ]]; then
+    GIT_DIR_SUFFIX="${WORKTREE_GIT_DIR#"$COMMON_GIT_DIR"}"
+    CONTAINER_GIT_DIR="/git-common${GIT_DIR_SUFFIX}"
+else
+    echo "Could not map this worktree's Git directory into the scanner container." >&2
+    exit 1
+fi
+
+case "$MODE" in
+    staged)
+        SCAN_ARGS=(protect --staged --verbose --redact --exit-code 1)
+        ;;
+    history)
+        SCAN_ARGS=(detect --source=/workspace/project --verbose --redact --exit-code 1)
+        ;;
+    history-range)
+        [[ $# -eq 1 && -n "$1" ]] || usage
+        SCAN_ARGS=(detect --source=/workspace/project --verbose --redact --exit-code 1 "--log-opts=$1")
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+exec tools/ci/docker-compose --profile tools run --rm --no-deps \
+    --volume "$COMMON_GIT_DIR:/git-common:ro" \
+    --env "GIT_DIR=$CONTAINER_GIT_DIR" \
+    --env GIT_WORK_TREE=/workspace/project \
+    --env GIT_OPTIONAL_LOCKS=0 \
+    gitleaks "${SCAN_ARGS[@]}" --config=/workspace/project/.gitleaks.toml

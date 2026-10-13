@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
+cd "$ROOT"
+
+SITES_ROOT=""
+candidate="$ROOT"
+while :; do
+    if [[ -f "$candidate/JOOservices/PROJECTS.md" && -f "$candidate/.agents/namespaces/JOOservices/AGENTS.md" ]]; then
+        SITES_ROOT="$candidate"
+        break
+    fi
+    [[ "$candidate" != / ]] || break
+    candidate="$(dirname "$candidate")"
+done
+
+if [[ -z "$SITES_ROOT" || ! -f "$SITES_ROOT/.env" ]]; then
+    echo "Could not find Sites/.env. Set JOOSERVICES_DTO_SONAR_LOCAL_TOKEN there after creating a local SonarQube project token." >&2
+    exit 1
+fi
+
+LOCAL_SONAR_TOKEN="$(awk -F= '$1 == "JOOSERVICES_DTO_SONAR_LOCAL_TOKEN" { sub(/^[^=]*=/, ""); sub(/\r$/, ""); value=$0; found=1 } END { if (found) print value; else exit 1 }' "$SITES_ROOT/.env")" || LOCAL_SONAR_TOKEN=""
+if [[ ${#LOCAL_SONAR_TOKEN} -ge 2 && ( "${LOCAL_SONAR_TOKEN:0:1}" == '"' || "${LOCAL_SONAR_TOKEN:0:1}" == "'" ) && "${LOCAL_SONAR_TOKEN: -1}" == "${LOCAL_SONAR_TOKEN:0:1}" ]]; then
+    LOCAL_SONAR_TOKEN="${LOCAL_SONAR_TOKEN:1:${#LOCAL_SONAR_TOKEN}-2}"
+fi
+
+if [[ -z "$LOCAL_SONAR_TOKEN" ]]; then
+    echo "Local Sonar token is missing. Create a project analysis token for jooservices_dto and set JOOSERVICES_DTO_SONAR_LOCAL_TOKEN in Sites/.env." >&2
+    exit 1
+fi
+
+if [[ ! -s coverage.xml ]]; then
+    echo "Sonar scan needs coverage.xml. Run make ci first." >&2
+    exit 1
+fi
+
+"$SITES_ROOT/JOOservices/docker/sonar" up
+SONAR_STATUS_URL="http://127.0.0.1:9000/api/system/status"
+SONAR_READY=false
+
+for ((attempt = 1; attempt <= 60; attempt++)); do
+    response="$(curl --fail --silent --show-error --max-time 2 "$SONAR_STATUS_URL" 2>/dev/null || true)"
+    if printf '%s' "$response" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"'; then
+        SONAR_READY=true
+        break
+    fi
+    sleep 2
+done
+
+if [[ "$SONAR_READY" != true ]]; then
+    echo "Shared local SonarQube did not become ready. Inspect it with: $SITES_ROOT/JOOservices/docker/sonar logs" >&2
+    exit 1
+fi
+
+export SONAR_HOST_URL=http://sonarqube:9000
+export SONAR_TOKEN="$LOCAL_SONAR_TOKEN"
+export SONAR_LOCAL=true
+unset LOCAL_SONAR_TOKEN
+
+exec tools/ci/run-sonar-scanner "$@"

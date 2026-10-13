@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT"
+
+BASE_REF="${DTO_GITLEAKS_BASE_REF:-origin/develop}"
+if ! git rev-parse --verify --quiet "${BASE_REF}^{commit}" >/dev/null; then
+    echo "Cannot scan pushed history: fetch or set DTO_GITLEAKS_BASE_REF (currently $BASE_REF)." >&2
+    exit 1
+fi
+
+tools/run-gitleaks history-range "${BASE_REF}..HEAD"
+exec make test
