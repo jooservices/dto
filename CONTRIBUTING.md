@@ -49,8 +49,12 @@ Keep hooks enabled; **never bypass them with `--no-verify`**.
 
 Commit headers must start with the Jira issue key and follow Conventional
 Commits. The project `commit-msg` hook enforces this locally, and
-`commitlint.yml` checks every commit in a PR. Both reject headers without a
-Jira key.
+`commitlint.yml` checks every commit in a PR. The PR check has a narrow
+Dependabot exception: only on a PR opened by `dependabot[bot]`, it allows
+dependency-generated headers whose subjects begin with `Bump` or
+`lockfile maintenance` in the configured `chore(deps)`, `chore(deps-dev)`, or
+`ci(deps)` scopes. The workflow rejects non-Dependabot-authored commits in
+those PRs. The local hook still requires a Jira-prefixed header.
 
 The separate PR-title check is enforced by `semantic-pr.yml` (subject must
 start with an uppercase letter).
